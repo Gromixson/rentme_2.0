@@ -6,16 +6,16 @@
 
 ## Checklist
 
-| Pytanie | Wynik | Uwagi |
-|---------|-------|-------|
-| Plan odpowiada zadaniu z roadmapy (S-06)? | ✅ | Outcome accept→booking, FR-008/012 |
-| End state konkretny? | ✅ | 5 punktów mierzalnych |
-| Fazy wykonalne, bez „implement everything”? | ✅ | 3 fazy, każda z własnym scope |
-| Intent + Contract per file? | ✅ | providers.ts, provider-requests, roadmap |
-| ## Progress format dla /10x-implement? | ✅ | Tabela phase/status/commit/notes |
-| Success criteria = zachowanie, nie pliki? | ✅ | Accept/decline/booking visibility |
-| Baseline odzwierciedla istniejący kod? | ✅ | partial/present z dowodami |
-| Nie przeskakuje S-07/S-08? | ✅ | Explicit out of scope |
+| Pytanie                                     | Wynik | Uwagi                                    |
+| ------------------------------------------- | ----- | ---------------------------------------- |
+| Plan odpowiada zadaniu z roadmapy (S-06)?   | ✅    | Outcome accept→booking, FR-008/012       |
+| End state konkretny?                        | ✅    | 5 punktów mierzalnych                    |
+| Fazy wykonalne, bez „implement everything”? | ✅    | 3 fazy, każda z własnym scope            |
+| Intent + Contract per file?                 | ✅    | providers.ts, provider-requests, roadmap |
+| ## Progress format dla /10x-implement?      | ✅    | Tabela phase/status/commit/notes         |
+| Success criteria = zachowanie, nie pliki?   | ✅    | Accept/decline/booking visibility        |
+| Baseline odzwierciedla istniejący kod?      | ✅    | partial/present z dowodami               |
+| Nie przeskakuje S-07/S-08?                  | ✅    | Explicit out of scope                    |
 
 ## Findings
 

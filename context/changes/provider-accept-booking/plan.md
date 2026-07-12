@@ -15,13 +15,13 @@ Po zakończeniu wszystkich faz tego change:
 
 ## Current state (baseline audit)
 
-| Warstwa | Stan | Dowód |
-|---------|------|-------|
-| API respond | partial | Transakcja OK, brak catch na błędy biznesowe |
-| API bookings/my | present | `functions/src/routes/bookings.ts` |
-| Provider UI | partial | Przyciski OK, brak linku po accept |
-| Seeker waiting | present | Polling + link `/bookings` po ACCEPTED |
-| Bookings list | present | `bookings-list.component.ts` |
+| Warstwa         | Stan    | Dowód                                        |
+| --------------- | ------- | -------------------------------------------- |
+| API respond     | partial | Transakcja OK, brak catch na błędy biznesowe |
+| API bookings/my | present | `functions/src/routes/bookings.ts`           |
+| Provider UI     | partial | Przyciski OK, brak linku po accept           |
+| Seeker waiting  | present | Polling + link `/bookings` po ACCEPTED       |
+| Bookings list   | present | `bookings-list.component.ts`                 |
 
 ## What we're NOT doing
 
@@ -45,6 +45,7 @@ Opakować `runTransaction` w handler mapujący błędy biznesowe na status HTTP 
 **Intent:** Użytkownik (provider) dostaje czytelny komunikat przy próbie respond na nieistniejący, cudzy, wygasły lub już rozstrzygnięty request.
 
 **Contract:**
+
 - `NOT_FOUND` → 404 `{ error: 'Prośba nie istnieje' }`
 - `FORBIDDEN` → 403 `{ error: 'Brak dostępu' }`
 - `NOT_PENDING` → 409 `{ error: 'Prośba nie jest już oczekująca' }`
@@ -80,6 +81,7 @@ Po udanej akceptacji provider widzi CTA do listy rezerwacji (parity z seeker wai
 **Intent:** Provider od razu wie, gdzie zobaczyć utworzoną rezerwację.
 
 **Contract:**
+
 - Toast sukcesu zawiera informację o booking
 - Opcjonalny link/przycisk „Zobacz rezerwacje” → `/bookings` lub auto-navigate po accept
 - Nie zmieniać kontraktu `ApiService.respondToRequest`
@@ -114,11 +116,11 @@ Manual checklist happy path §7 MVP (kroki 3–5), aktualizacja statusu S-06 w r
 
 ## Risks / Open Questions
 
-| Ryzyko | Mitygacja |
-|--------|-----------|
-| Regresja transakcji Firestore | Minimalny diff — tylko catch, bez zmiany logiki tx |
-| Demo wymaga dwóch kont Firebase | Dokumentacja w Progress; seed categories |
-| Brak testów automatycznych | Phase 1 weryfikacja build; manual w phase 3 |
+| Ryzyko                          | Mitygacja                                          |
+| ------------------------------- | -------------------------------------------------- |
+| Regresja transakcji Firestore   | Minimalny diff — tylko catch, bez zmiany logiki tx |
+| Demo wymaga dwóch kont Firebase | Dokumentacja w Progress; seed categories           |
+| Brak testów automatycznych      | Phase 1 weryfikacja build; manual w phase 3        |
 
 ## Success Criteria (change-level)
 
@@ -131,8 +133,8 @@ Manual checklist happy path §7 MVP (kroki 3–5), aktualizacja statusu S-06 w r
 
 ## Progress
 
-| Phase | Status | Commit | Notes |
-|-------|--------|--------|-------|
-| 1 — API error mapping | done | — (commit blocked: brak git user.name/email) | try/catch + respondHttpError; impl-review F1/F2 fixed; builds OK |
-| 2 — Provider UX | done | inline author | auto-navigate to /bookings after accept; toast parity with seeker |
-| 3 — Verification + roadmap | pending | — | |
+| Phase                      | Status  | Commit                                       | Notes                                                             |
+| -------------------------- | ------- | -------------------------------------------- | ----------------------------------------------------------------- |
+| 1 — API error mapping      | done    | — (commit blocked: brak git user.name/email) | try/catch + respondHttpError; impl-review F1/F2 fixed; builds OK  |
+| 2 — Provider UX            | done    | inline author                                | auto-navigate to /bookings after accept; toast parity with seeker |
+| 3 — Verification + roadmap | pending | —                                            |                                                                   |

@@ -24,26 +24,26 @@ Slice S-05 domyka **scenariusz negatywny MVP** (brak odpowiedzi → TIMEOUT). Ko
 
 ## Kluczowe decyzje kontraktu (ze źródłami)
 
-| Decyzja | Wybór | Źródło |
-|---------|-------|--------|
-| Mechanizm expiry | **Scheduler (1 min) + lazy on read** | [Firebase schedule functions](https://firebase.google.com/docs/functions/schedule-functions); [external-research.md](external-research.md) — odrzucenie TTL |
-| Firestore TTL | **Nie** — TTL usuwa docs z opóźnieniem do 24h, nie ustawia statusu | [Firestore TTL](https://firebase.google.com/docs/firestore/ttl): *"typically deleted within 24 hours"* |
-| Cloud Tasks per request | **Nie na MVP** — precyzja sekundowa bez korzyści przy poll 3s | [Cloud Tasks vs Scheduler](https://cloud.google.com/tasks/docs/comp-tasks-sched) |
-| Timeout duration | **120s** (`REQUEST_TIMEOUT_MS`) | `functions/src/db.ts:7`; MVP.md §3.5 |
-| Lazy expiry scope | **GET** `/requests/:id`, `/requests/my`, `/providers/requests` | `research.md` — existing paths |
-| Scheduler implementacja | **Transakcyjne** `expirePendingRequest` per doc (nie blind batch) | `research.md` §Race accept vs batch |
-| Indeks Firestore | **Dodać** `requests`: `status` + `expiresAt` | `firestore.indexes.json` gap; `infra-research.md` §Indexes |
-| UI odświeżanie | **Poll 3s** + client countdown z `expiresAt` | `request-waiting.component.ts`; Scheduler min 1 min |
-| Respond na wygasły | **410** `{ error: 'Czas na odpowiedź minął' }` | `provider-accept-booking/plan.md` — bez zmian |
+| Decyzja                 | Wybór                                                              | Źródło                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mechanizm expiry        | **Scheduler (1 min) + lazy on read**                               | [Firebase schedule functions](https://firebase.google.com/docs/functions/schedule-functions); [external-research.md](external-research.md) — odrzucenie TTL |
+| Firestore TTL           | **Nie** — TTL usuwa docs z opóźnieniem do 24h, nie ustawia statusu | [Firestore TTL](https://firebase.google.com/docs/firestore/ttl): _"typically deleted within 24 hours"_                                                      |
+| Cloud Tasks per request | **Nie na MVP** — precyzja sekundowa bez korzyści przy poll 3s      | [Cloud Tasks vs Scheduler](https://cloud.google.com/tasks/docs/comp-tasks-sched)                                                                            |
+| Timeout duration        | **120s** (`REQUEST_TIMEOUT_MS`)                                    | `functions/src/db.ts:7`; MVP.md §3.5                                                                                                                        |
+| Lazy expiry scope       | **GET** `/requests/:id`, `/requests/my`, `/providers/requests`     | `research.md` — existing paths                                                                                                                              |
+| Scheduler implementacja | **Transakcyjne** `expirePendingRequest` per doc (nie blind batch)  | `research.md` §Race accept vs batch                                                                                                                         |
+| Indeks Firestore        | **Dodać** `requests`: `status` + `expiresAt`                       | `firestore.indexes.json` gap; `infra-research.md` §Indexes                                                                                                  |
+| UI odświeżanie          | **Poll 3s** + client countdown z `expiresAt`                       | `request-waiting.component.ts`; Scheduler min 1 min                                                                                                         |
+| Respond na wygasły      | **410** `{ error: 'Czas na odpowiedź minął' }`                     | `provider-accept-booking/plan.md` — bez zmian                                                                                                               |
 
 ## Fazy (skrót)
 
-| Faza | Zakres | Ryzyko |
-|------|--------|--------|
-| 1 | Index + scheduler tx hardening | Średnie — wymaga deploy indexes |
-| 2 | Spójność API read paths | Niskie |
-| 3 | Weryfikacja UX seekera | Niskie |
-| 4 | Checklist manual + roadmap | Wymaga 2 kont Firebase |
+| Faza | Zakres                         | Ryzyko                          |
+| ---- | ------------------------------ | ------------------------------- |
+| 1    | Index + scheduler tx hardening | Średnie — wymaga deploy indexes |
+| 2    | Spójność API read paths        | Niskie                          |
+| 3    | Weryfikacja UX seekera         | Niskie                          |
+| 4    | Checklist manual + roadmap     | Wymaga 2 kont Firebase          |
 
 ## Otwarte pytania (explicit)
 

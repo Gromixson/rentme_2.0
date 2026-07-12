@@ -32,15 +32,15 @@ export async function recalcCategoryOnlineCounts(): Promise<void> {
 }
 
 export async function updateProviderRating(providerId: string): Promise<void> {
-  const ratingsSnap = await db()
-    .collection('ratings')
-    .where('providerId', '==', providerId)
-    .get();
+  const ratingsSnap = await db().collection('ratings').where('providerId', '==', providerId).get();
   const total = ratingsSnap.docs.reduce((sum, d) => sum + (d.data().rating as number), 0);
   const count = ratingsSnap.size;
   const average = count > 0 ? total / count : 0;
-  await db().collection('providers').doc(providerId).update({
-    averageRating: Math.round(average * 10) / 10,
-    ratingCount: count,
-  });
+  await db()
+    .collection('providers')
+    .doc(providerId)
+    .update({
+      averageRating: Math.round(average * 10) / 10,
+      ratingCount: count,
+    });
 }

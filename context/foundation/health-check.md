@@ -85,13 +85,13 @@ Provider: GitHub Actions
 Configuration: .github/workflows/ci.yml
 ```
 
-| Stage      | Status | Notes                                                |
-|------------|--------|------------------------------------------------------|
-| Lint       | ✗      | No ESLint at repo root; functions has local eslint   |
-| Test       | ✓      | `npm test` (ChromeHeadless, single run)              |
-| Build      | ✓      | `npm run build` (Angular production)                 |
-| Type check | ✓      | Enforced via `ng build` / strict tsconfig            |
-| Security   | ✗      | No audit step or Dependabot in workflow              |
+| Stage      | Status | Notes                                              |
+| ---------- | ------ | -------------------------------------------------- |
+| Lint       | ✗      | No ESLint at repo root; functions has local eslint |
+| Test       | ✓      | `npm test` (ChromeHeadless, single run)            |
+| Build      | ✓      | `npm run build` (Angular production)               |
+| Type check | ✓      | Enforced via `ng build` / strict tsconfig          |
+| Security   | ✗      | No audit step or Dependabot in workflow            |
 
 Workflow triggers on **push** and **pull_request** to **main**: checkout → Node 20 → `npm ci` → `npm run build` → `npm test`.
 
@@ -105,11 +105,11 @@ firebase.json: hosting, functions (predeploy build), firestore, storage, auth (e
 Deploy status: config on disk; production deploy is manual (not CI-gated here)
 ```
 
-| Artifact        | Local verify (2026-05-23) | Deploy notes                                      |
-|-----------------|---------------------------|---------------------------------------------------|
-| Angular app     | `npm run build` → OK      | `firebase deploy --only hosting` when ready       |
+| Artifact        | Local verify (2026-05-23)            | Deploy notes                                        |
+| --------------- | ------------------------------------ | --------------------------------------------------- |
+| Angular app     | `npm run build` → OK                 | `firebase deploy --only hosting` when ready         |
 | Cloud Functions | `npm run build` in `functions/` → OK | Requires Blaze, App Engine once (`setup:appengine`) |
-| Auth provider   | Declared in firebase.json | `npm run setup:auth` one-time                     |
+| Auth provider   | Declared in firebase.json            | `npm run setup:auth` one-time                       |
 
 Operational risks (CORS allowlist, App Engine bucket, Email/Password) are documented in `context/foundation/infra-research.md` — not re-audited in this run.
 
@@ -208,13 +208,13 @@ Then add `npm run lint` to `.github/workflows/ci.yml` when ready.
 
 ## Verification log (this run)
 
-| Command | Result | Notes |
-|---------|--------|-------|
-| `npm run build` | **PASS** | ~7.2s; bundle budget warning only |
-| `npm test` | **PASS** | 3/3 in `auth-ready.spec.ts`, ChromeHeadless |
-| `npm run build` (functions/) | **PASS** | `tsc` clean |
-| `npm audit` (root) | **PASS** | 0 vulnerabilities |
-| `npm audit` (functions/) | **ADVISORY** | 9 moderate (transitive) |
+| Command                      | Result       | Notes                                       |
+| ---------------------------- | ------------ | ------------------------------------------- |
+| `npm run build`              | **PASS**     | ~7.2s; bundle budget warning only           |
+| `npm test`                   | **PASS**     | 3/3 in `auth-ready.spec.ts`, ChromeHeadless |
+| `npm run build` (functions/) | **PASS**     | `tsc` clean                                 |
+| `npm audit` (root)           | **PASS**     | 0 vulnerabilities                           |
+| `npm audit` (functions/)     | **ADVISORY** | 9 moderate (transitive)                     |
 
 ## Summary
 

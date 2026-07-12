@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: S-06 Provider accept → booking (Phase 1)
 
 - **Plan**: `context/changes/provider-accept-booking/plan.md`
@@ -9,23 +10,23 @@
 
 ## Verdicts
 
-| Dimension | Verdict | Uwagi |
-|-----------|---------|-------|
-| Plan Adherence | PASS ✅ | try/catch + `respondHttpError`; mapowanie zgodne z Contract |
-| Scope Discipline | PASS ✅ | Tylko `functions/src/routes/providers.ts`; brak zmian poza fazą |
-| Safety & Quality | PASS ✅ | Po F1/F2: TIMEOUT persystuje, recalc nie maskuje sukcesu |
-| Architecture | PASS ✅ | Logika transakcji w route; bez nowych warstw |
+| Dimension           | Verdict    | Uwagi                                                                            |
+| ------------------- | ---------- | -------------------------------------------------------------------------------- |
+| Plan Adherence      | PASS ✅    | try/catch + `respondHttpError`; mapowanie zgodne z Contract                      |
+| Scope Discipline    | PASS ✅    | Tylko `functions/src/routes/providers.ts`; brak zmian poza fazą                  |
+| Safety & Quality    | PASS ✅    | Po F1/F2: TIMEOUT persystuje, recalc nie maskuje sukcesu                         |
+| Architecture        | PASS ✅    | Logika transakcji w route; bez nowych warstw                                     |
 | Pattern Consistency | WARNING ⚠️ | Helper `respondHttpError` vs inline w `bookings.ts`/`requests.ts` — akceptowalne |
-| Success Criteria | PASS ✅ | `npm run build` + `functions:build` green |
+| Success Criteria    | PASS ✅    | `npm run build` + `functions:build` green                                        |
 
 ## Success criteria verification (Phase 1)
 
-| Kryterium | Wynik | Dowód |
-|-----------|-------|-------|
-| Każdy kod błędu → właściwy status + `{ error }` | PASS | `respondHttpError` mapuje NOT_FOUND/403/409/410/500 |
-| Happy path accept/decline bez regresji | PASS | Transakcja bez zmian logiki biznesowej (poza F1) |
-| `functions:build` OK | PASS | `npm run functions:build` exit 0 (2026-07-12) |
-| Manual verification (optional) | PENDING | Phase 3 |
+| Kryterium                                       | Wynik   | Dowód                                               |
+| ----------------------------------------------- | ------- | --------------------------------------------------- |
+| Każdy kod błędu → właściwy status + `{ error }` | PASS    | `respondHttpError` mapuje NOT_FOUND/403/409/410/500 |
+| Happy path accept/decline bez regresji          | PASS    | Transakcja bez zmian logiki biznesowej (poza F1)    |
+| `functions:build` OK                            | PASS    | `npm run functions:build` exit 0 (2026-07-12)       |
+| Manual verification (optional)                  | PENDING | Phase 3                                             |
 
 ## Findings
 
@@ -81,13 +82,13 @@
 
 ## Triage summary
 
-| ID | Decyzja |
-|----|---------|
-| F1 | FIXED — fix now |
-| F2 | FIXED — fix now |
-| F3 | SKIPPED — kosmetyka, poza phase 1 |
-| F4 | SKIPPED — zgodnie z planem, brak harness |
-| F5 | ACCEPTED RISK — brak git identity u użytkownika |
+| ID  | Decyzja                                         |
+| --- | ----------------------------------------------- |
+| F1  | FIXED — fix now                                 |
+| F2  | FIXED — fix now                                 |
+| F3  | SKIPPED — kosmetyka, poza phase 1               |
+| F4  | SKIPPED — zgodnie z planem, brak harness        |
+| F5  | ACCEPTED RISK — brak git identity u użytkownika |
 
 ## Lesson recorded
 

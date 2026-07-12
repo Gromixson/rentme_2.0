@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: S-05 Request timeout & expiry (Phase 1)
 
 - **Plan**: `context/changes/request-timeout-expiry/plan.md`
@@ -9,22 +10,22 @@
 
 ## Verdicts
 
-| Dimension | Verdict | Uwagi |
-|-----------|---------|-------|
-| Plan Adherence | PASS ✅ | Index `status+expiresAt`; scheduler używa `expirePendingRequest` per doc |
-| Scope Discipline | PASS ✅ | Tylko `firestore.indexes.json` + `functions/src/services/requests.ts` |
-| Safety & Quality | PASS ✅ | Transakcyjny re-check PENDING eliminuje race z accept |
-| Architecture | PASS ✅ | Reuse istniejącego `expirePendingRequest`; bez nowych warstw |
-| Pattern Consistency | PASS ✅ | Spójne z lazy path `resolveRequestStatus` |
-| Success Criteria | PASS ✅ | `npm run functions:build` exit 0 |
+| Dimension           | Verdict | Uwagi                                                                    |
+| ------------------- | ------- | ------------------------------------------------------------------------ |
+| Plan Adherence      | PASS ✅ | Index `status+expiresAt`; scheduler używa `expirePendingRequest` per doc |
+| Scope Discipline    | PASS ✅ | Tylko `firestore.indexes.json` + `functions/src/services/requests.ts`    |
+| Safety & Quality    | PASS ✅ | Transakcyjny re-check PENDING eliminuje race z accept                    |
+| Architecture        | PASS ✅ | Reuse istniejącego `expirePendingRequest`; bez nowych warstw             |
+| Pattern Consistency | PASS ✅ | Spójne z lazy path `resolveRequestStatus`                                |
+| Success Criteria    | PASS ✅ | `npm run functions:build` exit 0                                         |
 
 ## Success criteria verification (Phase 1)
 
-| Kryterium | Wynik | Dowód |
-|-----------|-------|-------|
-| `firestore.indexes.json` zawiera index status + expiresAt | PASS | Nowy wpis w tablicy indexes |
-| `functions:build` OK | PASS | `npm run functions:build` exit 0 (2026-07-12) |
-| Po deploy brak „missing index” | PENDING | Wymaga `firebase deploy --only firestore:indexes` |
+| Kryterium                                                 | Wynik   | Dowód                                             |
+| --------------------------------------------------------- | ------- | ------------------------------------------------- |
+| `firestore.indexes.json` zawiera index status + expiresAt | PASS    | Nowy wpis w tablicy indexes                       |
+| `functions:build` OK                                      | PASS    | `npm run functions:build` exit 0 (2026-07-12)     |
+| Po deploy brak „missing index”                            | PENDING | Wymaga `firebase deploy --only firestore:indexes` |
 
 ## Findings
 
@@ -48,10 +49,10 @@
 
 ## Triage summary
 
-| ID | Decyzja |
-|----|---------|
-| F1 | ACCEPTED — zgodnie z planem |
-| F2 | SKIPPED — deploy infra poza phase 1 code |
+| ID  | Decyzja                                  |
+| --- | ---------------------------------------- |
+| F1  | ACCEPTED — zgodnie z planem              |
+| F2  | SKIPPED — deploy infra poza phase 1 code |
 
 ## Overall verdict
 

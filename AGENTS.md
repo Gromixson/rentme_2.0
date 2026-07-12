@@ -35,12 +35,17 @@ src/app/
 
 ## Build, test, and development
 
-| Command | Purpose |
-|---------|---------|
-| `npm start` | Dev server (`ng serve`); API via `environment.apiUrl` (cloud Functions URL by default) |
-| `npm run dev:api` | Optional: local Functions emulator only |
-| `npm run build` | Production build to `dist/rentme` |
-| `npm test` | Unit tests (Karma + Jasmine, headless Chrome) |
+| Command                  | Purpose                                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| `npm start`              | Dev server (`ng serve`); API via `environment.apiUrl` (cloud Functions URL by default)              |
+| `npm run dev:api`        | Optional: local Functions emulator only                                                             |
+| `npm run build`          | Production build to `dist/rentme`                                                                   |
+| `npm test`               | Unit tests (Karma + Jasmine, headless Chrome)                                                       |
+| `npm run functions:test` | Functions unit tests (Vitest) — pure expiry/transaction logic in `functions/src/services/*.test.ts` |
+| `npm run hooks:verify`   | Smoke-test Cursor hook scripts (Prettier, tsc, auth test skip)                                      |
+| `npm run hooks:install`  | Install lefthook pre-commit (Prettier check + tsc on staged files)                                  |
+
+Cursor **afterFileEdit** hooks: `@.cursor/hooks.json` → `@scripts/hooks/` (format, typecheck, scoped auth tests). Details: `@context/foundation/test-plan.md` §7, `@.cursor/rules/m3l3-quality-gates.mdc`.
 
 New Firebase project (once): `setup:firestore` → `setup:appengine` → `setup:auth` → `firebase deploy --only functions,firestore:rules`. See `@README.md`.
 
@@ -54,12 +59,12 @@ Run `npm run build` after non-trivial changes.
 
 ## Agent skills (invoke by name)
 
-| Skill | When |
-|-------|------|
-| `rentme-stack` | Folders, MVP scope |
+| Skill             | When                                       |
+| ----------------- | ------------------------------------------ |
+| `rentme-stack`    | Folders, MVP scope                         |
 | `rentme-firebase` | Auth, Firestore, Storage, rules, emulators |
-| `rentme-feature` | A specific FR/US from PRD |
-| `/10x-*` | Course workflow under `context/` only |
+| `rentme-feature`  | A specific FR/US from PRD                  |
+| `/10x-*`          | Course workflow under `context/` only      |
 
 ## Lessons learned
 

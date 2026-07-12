@@ -1,7 +1,7 @@
 ---
 change_id: request-timeout-expiry
 title: Timeout requestu — wygasanie PENDING → TIMEOUT (S-05)
-status: proposed
+status: in-progress
 created: 2026-07-12
 updated: 2026-07-12
 roadmap_ref: S-05
@@ -21,14 +21,14 @@ Zweryfikować i utwardzić slice **request timeout + expiration**: klient wysył
 
 ## Baseline (2026-07-12)
 
-| Warstwa | Stan | Dowód |
-|---------|------|-------|
-| API create/read | present | `functions/src/routes/requests.ts` — `expiresAt` przy tworzeniu |
-| Scheduler | present | `functions/src/index.ts` — `expireRequests` co 1 min |
-| Lazy expiry | present | `resolveRequestStatus` na GET `/requests/:id`, `/requests/my`, provider list |
-| UI timer | partial | `RequestWaitingComponent` — countdown z `expiresAt`, poll co 3s |
-| Indeks Firestore | **gap** | Brak `status + expiresAt` w `firestore.indexes.json` |
-| Respond guard | present | `providers.ts` — transakcja odrzuca wygasłe z `TIMEOUT` |
+| Warstwa          | Stan    | Dowód                                                                        |
+| ---------------- | ------- | ---------------------------------------------------------------------------- |
+| API create/read  | present | `functions/src/routes/requests.ts` — `expiresAt` przy tworzeniu              |
+| Scheduler        | present | `functions/src/index.ts` — `expireRequests` co 1 min                         |
+| Lazy expiry      | present | `resolveRequestStatus` na GET `/requests/:id`, `/requests/my`, provider list |
+| UI timer         | partial | `RequestWaitingComponent` — countdown z `expiresAt`, poll co 3s              |
+| Indeks Firestore | **gap** | Brak `status + expiresAt` w `firestore.indexes.json`                         |
+| Respond guard    | present | `providers.ts` — transakcja odrzuca wygasłe z `TIMEOUT`                      |
 
 ## Out of scope (this change)
 

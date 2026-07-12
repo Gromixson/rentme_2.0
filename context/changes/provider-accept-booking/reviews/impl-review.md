@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: S-06 Provider accept → booking (Phase 2)
 
 - **Plan**: `context/changes/provider-accept-booking/plan.md`
@@ -9,22 +10,22 @@
 
 ## Verdicts
 
-| Dimension | Verdict | Uwagi |
-|-----------|---------|-------|
-| Plan Adherence | PASS ✅ | Auto-navigate `/bookings` + toast parity z seeker waiting |
-| Scope Discipline | PASS ✅ | Tylko `provider-requests.component.ts`; brak zmian ApiService |
-| Safety & Quality | PASS ✅ | Decline path bez regresji (reload listy) |
-| Architecture | PASS ✅ | Router inject; wzorzec jak `request-waiting.component.ts` |
-| Pattern Consistency | PASS ✅ | Toast `success('Zaakceptowano!', 'Rezerwacja…')` jak seeker |
-| Success Criteria | PASS ✅ | `npm run build` exit 0 |
+| Dimension           | Verdict | Uwagi                                                         |
+| ------------------- | ------- | ------------------------------------------------------------- |
+| Plan Adherence      | PASS ✅ | Auto-navigate `/bookings` + toast parity z seeker waiting     |
+| Scope Discipline    | PASS ✅ | Tylko `provider-requests.component.ts`; brak zmian ApiService |
+| Safety & Quality    | PASS ✅ | Decline path bez regresji (reload listy)                      |
+| Architecture        | PASS ✅ | Router inject; wzorzec jak `request-waiting.component.ts`     |
+| Pattern Consistency | PASS ✅ | Toast `success('Zaakceptowano!', 'Rezerwacja…')` jak seeker   |
+| Success Criteria    | PASS ✅ | `npm run build` exit 0                                        |
 
 ## Success criteria verification (Phase 2)
 
-| Kryterium | Wynik | Dowód |
-|-----------|-------|-------|
-| Po accept widoczna ścieżka do `/bookings` | PASS | `router.navigate(['/bookings'])` po sukcesie accept |
-| `npm run build` OK | PASS | `npm run build` exit 0 (2026-07-12) |
-| Kontrakt ApiService bez zmian | PASS | Brak diff w `api.service.ts` |
+| Kryterium                                 | Wynik | Dowód                                               |
+| ----------------------------------------- | ----- | --------------------------------------------------- |
+| Po accept widoczna ścieżka do `/bookings` | PASS  | `router.navigate(['/bookings'])` po sukcesie accept |
+| `npm run build` OK                        | PASS  | `npm run build` exit 0 (2026-07-12)                 |
+| Kontrakt ApiService bez zmian             | PASS  | Brak diff w `api.service.ts`                        |
 
 ## Findings
 
@@ -48,10 +49,10 @@
 
 ## Triage summary
 
-| ID | Decyzja |
-|----|---------|
-| F1 | ACCEPTED |
-| F2 | SKIPPED — zgodnie z planem |
+| ID  | Decyzja                    |
+| --- | -------------------------- |
+| F1  | ACCEPTED                   |
+| F2  | SKIPPED — zgodnie z planem |
 
 ## Overall verdict
 

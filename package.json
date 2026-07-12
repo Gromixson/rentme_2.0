@@ -13,7 +13,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --no-watch --browsers=ChromeHeadless",
+    "hooks:install": "lefthook install",
+    "hooks:verify": "node scripts/hooks/verify-hooks.mjs",
     "functions:build": "npm run build --prefix functions",
+    "functions:test": "npm run test --prefix functions",
     "emulators": "firebase emulators:start --import=./.firebase-emulator-data --export-on-exit",
     "emulators:exec": "firebase emulators:exec"
   },
@@ -45,6 +48,7 @@
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
+    "lefthook": "^1.13.6",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "zone.js": "^0.15.0"

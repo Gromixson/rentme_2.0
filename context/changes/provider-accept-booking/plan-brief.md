@@ -22,11 +22,11 @@ Slice S-06 to **kamień milowy walidacji** RentMe — bez accept→booking reszt
 
 ## Fazy (skrót)
 
-| Faza | Zakres | Ryzyko |
-|------|--------|--------|
-| 1 | Mapowanie błędów API respond | Niskie |
-| 2 | UX provider → bookings po accept | Niskie |
-| 3 | Checklist manual + aktualizacja roadmap | — |
+| Faza | Zakres                                  | Ryzyko |
+| ---- | --------------------------------------- | ------ |
+| 1    | Mapowanie błędów API respond            | Niskie |
+| 2    | UX provider → bookings po accept        | Niskie |
+| 3    | Checklist manual + aktualizacja roadmap | —      |
 
 ## Kryteria sukcesu (skrót)
 

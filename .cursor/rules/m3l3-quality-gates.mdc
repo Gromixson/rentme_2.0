@@ -1,0 +1,24 @@
+---
+description: M3L3 — Cursor hooks & quality gates for RentMe (format, typecheck, scoped tests)
+globs: src/**,functions/**,scripts/hooks/**
+alwaysApply: false
+---
+
+# M3L3 — Hooks & quality gates
+
+Deterministic checks run via **`.cursor/hooks.json`** (`afterFileEdit`), not via prompt reminders.
+
+| Layer | When | Command |
+| ----- | ---- | ------- |
+| Format | per edit | `node scripts/hooks/prettier-after-edit.mjs` |
+| Typecheck | per edit + pre-commit | `node scripts/hooks/typecheck-after-edit.mjs` / lefthook `typecheck-*` |
+| Auth tests | per edit in `core/auth/**` | `node scripts/hooks/test-auth-after-edit.mjs` |
+| Functions tests | per edit in `functions/src/**` (≠ `.test.ts`) | `node scripts/hooks/test-functions-after-edit.mjs` |
+
+- Hook scripts parse Cursor stdin JSON field **`file_path`**.
+- **Exit code 2** = blocking error (typecheck/test failure).
+- No root ESLint — Prettier + `tsc --noEmit` only.
+- Full CI unchanged: `.github/workflows/ci.yml` → `build` + `test`.
+- Verify: Cursor **Hooks** output channel; manual: `npm run hooks:verify`.
+
+Claude Code equivalent: `docs/hooks-claude-code-equivalent.json` (PostToolUse + `tool_input.file_path`).

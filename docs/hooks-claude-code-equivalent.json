@@ -1,0 +1,59 @@
+{
+  "_comment": "M3L3 cross-tool translation — Claude Code PostToolUse equivalent of .cursor/hooks.json (RentMe). Claude reads tool_input.file_path; Cursor afterFileEdit uses file_path at root. No Claude install required.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');const p=JSON.parse(fs.readFileSync(0,'utf8')).tool_input?.file_path;if(!p)process.exit(0);require('child_process').spawnSync(process.platform==='win32'?'npx.cmd':'npx',['prettier','--write',p],{stdio:'inherit'});process.exit(0)\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/typecheck-after-edit.mjs",
+            "_note": "Reuse RentMe script; stdin must be adapted — Claude PostToolUse passes tool_input.file_path, not file_path. Wrapper: echo {\"file_path\":\"$(jq -r .tool_input.file_path)\"} | node scripts/hooks/typecheck-after-edit.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');const i=JSON.parse(fs.readFileSync(0,'utf8'));const fp=i.tool_input?.file_path;if(fp){process.stdin.destroy();require('child_process').spawnSync('node',['scripts/hooks/test-auth-after-edit.mjs'],{input:JSON.stringify({file_path:fp}),stdio:['pipe','inherit','inherit']});}\""
+          }
+        ]
+      }
+    ]
+  },
+  "cursor_mapping": {
+    "event": "afterFileEdit",
+    "config_file": ".cursor/hooks.json",
+    "stdin_field": "file_path",
+    "blocking_exit_code": 2,
+    "hooks": [
+      {
+        "name": "prettier",
+        "command": "node scripts/hooks/prettier-after-edit.mjs",
+        "timeout_seconds": 30
+      },
+      {
+        "name": "typecheck",
+        "command": "node scripts/hooks/typecheck-after-edit.mjs",
+        "timeout_seconds": 60
+      },
+      {
+        "name": "test-auth",
+        "command": "node scripts/hooks/test-auth-after-edit.mjs",
+        "timeout_seconds": 120,
+        "scope": "src/app/core/auth/** (R-07 role guards)"
+      }
+    ]
+  }
+}

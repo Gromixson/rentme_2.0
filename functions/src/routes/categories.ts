@@ -71,10 +71,7 @@ router.post('/:id/interests', requireAuth, async (req: AuthedRequest, res) => {
 
 router.get('/:id/interests/count', requireAuth, async (req: AuthedRequest, res) => {
   const categoryId = req.params.id;
-  const snap = await db()
-    .collection('interests')
-    .where('categoryId', '==', categoryId)
-    .get();
+  const snap = await db().collection('interests').where('categoryId', '==', categoryId).get();
   res.json({ count: snap.size });
 });
 

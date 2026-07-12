@@ -16,9 +16,7 @@ export function roleGuard(expected: UserRole): CanActivateFn {
       return router.createUrlTree(['/']);
     }
     if (auth.activeRole() !== expected) {
-      return router.createUrlTree([
-        expected === 'PROVIDER' ? '/provider' : '/seeker',
-      ]);
+      return router.createUrlTree([expected === 'PROVIDER' ? '/provider' : '/seeker']);
     }
     return true;
   };

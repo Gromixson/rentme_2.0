@@ -18,15 +18,15 @@ Po zakończeniu wszystkich faz tego change:
 
 ## Current state (baseline audit)
 
-| Warstwa | Stan | Dowód |
-|---------|------|-------|
-| POST /requests + expiresAt | present | `functions/src/routes/requests.ts:39-51` |
-| Scheduler expireRequests | present | `functions/src/index.ts:12-19` |
-| Lazy resolveRequestStatus | present | `functions/src/services/requests.ts:41-49` |
-| Firestore index status+expiresAt | **missing** | `firestore.indexes.json` — brak wpisu |
-| Scheduler batch vs tx | inconsistent | `expireStalePendingRequests` batch vs `expirePendingRequest` tx |
-| UI timer + poll | present | `request-waiting.component.ts` |
-| Manual verification | **missing** | Brak checklist w change |
+| Warstwa                          | Stan         | Dowód                                                           |
+| -------------------------------- | ------------ | --------------------------------------------------------------- |
+| POST /requests + expiresAt       | present      | `functions/src/routes/requests.ts:39-51`                        |
+| Scheduler expireRequests         | present      | `functions/src/index.ts:12-19`                                  |
+| Lazy resolveRequestStatus        | present      | `functions/src/services/requests.ts:41-49`                      |
+| Firestore index status+expiresAt | **missing**  | `firestore.indexes.json` — brak wpisu                           |
+| Scheduler batch vs tx            | inconsistent | `expireStalePendingRequests` batch vs `expirePendingRequest` tx |
+| UI timer + poll                  | present      | `request-waiting.component.ts`                                  |
+| Manual verification              | **missing**  | Brak checklist w change                                         |
 
 ## What we're NOT doing
 
@@ -50,6 +50,7 @@ Zapewnić, że scheduled query działa w prod i że batch expiry nie wygrywa wy�
 **Intent:** Scheduler query `PENDING` + `expiresAt <= now` ma wymagany composite index.
 
 **Contract:**
+
 - Dodaj index: collection `requests`, fields `status` ASC, `expiresAt` ASC
 - Źródło: [Firestore composite indexes](https://firebase.google.com/docs/firestore/query-data/index-overview) — query z dwoma inequality/range wymaga indexu; infra-research.md §Indexes
 
@@ -60,6 +61,7 @@ Zapewnić, że scheduled query działa w prod i że batch expiry nie wygrywa wy�
 **Intent:** Scheduler używa tej samej logiki co lazy path — transakcyjny re-check `PENDING`.
 
 **Contract:**
+
 - `expireStalePendingRequests`: zamiast batch blind update, iteruj docs z query i wołaj `expirePendingRequest(id)` (lub tx loop z limitem 100)
 - Idempotentne: drugie wywołanie na już TIMEOUT → no-op
 - Źródło decyzji: research.md §Race accept vs batch expire; nie zakładamy „batch wystarczy"
@@ -89,6 +91,7 @@ Upewnić się, że wszystkie ścieżki odczytu requestów przechodzą przez `res
 **Intent:** Seeker poll i lista zawsze zwracają aktualny status po lazy expiry.
 
 **Contract:**
+
 - `GET /:id` i `GET /my` — bez zmian logiki (już OK); response zawiera zaktualizowany `status`
 - Response shape: `{ id, seekerId, providerId, categoryId, message, status, expiresAt, createdAt, seekerName? }`
 - Źródło: MVP.md §4.3 — brak osobnego endpointu „expire"; lazy pattern z [external-research.md](external-research.md) werdykt A+B
@@ -98,6 +101,7 @@ Upewnić się, że wszystkie ścieżki odczytu requestów przechodzą przez `res
 **Intent:** Provider pending list nie pokazuje wygasłych jako PENDING.
 
 **Contract:**
+
 - Po `resolveRequestStatus`, filtr `status === 'PENDING'` (już `providers.ts:90-92`)
 - Spójność z S-06: respond na wygasły → 410 ([provider-accept-booking/plan.md](../provider-accept-booking/plan.md))
 
@@ -121,6 +125,7 @@ Timer i polling seekera odzwierciedlają backend timeout bez regresji.
 **Intent:** Użytkownik widzi countdown i finalny stan TIMEOUT z toastem.
 
 **Contract:**
+
 - Timer: `max(0, expiresAt - now)` — client-side, źródło `expiresAt` z API (MVP.md §3.4)
 - Poll co 3s dopóki PENDING — wystarczające przy lazy expiry ([Firebase Scheduler min 1 min](https://cloud.google.com/tasks/docs/comp-tasks-sched))
 - Po TIMEOUT: toast „Czas minął”, link do „Moje prośby"
@@ -131,6 +136,7 @@ Timer i polling seekera odzwierciedlają backend timeout bez regresji.
 **Intent:** Lista pokazuje status TIMEOUT (nie raw enum bez tłumaczenia — opcjonalny polish).
 
 **Contract (minimal):**
+
 - `getMyRequests()` odświeża statusy przez API lazy expiry
 - Opcjonalnie: mapowanie labeli jak w waiting screen (open question #4)
 
@@ -154,6 +160,7 @@ Manual scenariusz negatywny MVP.md §7 + aktualizacja roadmap.
 **Intent:** Powtarzalna checklista demo/CI manual.
 
 **Contract checklist:**
+
 1. Provider online, seeker wysyła request
 2. Provider **nie** odpowiada ≥2 min
 3. Seeker widzi TIMEOUT na waiting screen
@@ -176,13 +183,13 @@ Manual scenariusz negatywny MVP.md §7 + aktualizacja roadmap.
 
 ## Risks / Open Questions
 
-| Ryzyko / pytanie | Mitygacja / status |
-|------------------|-------------------|
-| Brak indexu w prod → scheduler silent fail | Phase 1 — deploy indexes |
-| Scheduler lag +0–60s | Lazy expiry + poll 3s; akceptowalne per external research |
-| Race accept vs expire | Phase 1 — tx per doc |
-| Emulator bez schedulera | Test lazy path + manual trigger function |
-| Firestore TTL kusi jako „prostsze” | Odrzucone — [TTL 24h delay](https://firebase.google.com/docs/firestore/ttl) |
+| Ryzyko / pytanie                           | Mitygacja / status                                                          |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| Brak indexu w prod → scheduler silent fail | Phase 1 — deploy indexes                                                    |
+| Scheduler lag +0–60s                       | Lazy expiry + poll 3s; akceptowalne per external research                   |
+| Race accept vs expire                      | Phase 1 — tx per doc                                                        |
+| Emulator bez schedulera                    | Test lazy path + manual trigger function                                    |
+| Firestore TTL kusi jako „prostsze”         | Odrzucone — [TTL 24h delay](https://firebase.google.com/docs/firestore/ttl) |
 
 ## Success Criteria (change-level)
 
@@ -196,9 +203,10 @@ Manual scenariusz negatywny MVP.md §7 + aktualizacja roadmap.
 
 ## Progress
 
-| Phase | Status | Commit | Notes |
-|-------|--------|--------|-------|
-| 1 — Index + scheduler | done | inline author | composite index + tx per doc in expireStalePendingRequests |
-| 2 — API consistency | pending | — | |
-| 3 — Seeker UX | pending | — | |
-| 4 — Verification | pending | — | |
+| Phase                 | Status   | Commit        | Notes                                                                       |
+| --------------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| 0 — Unit tests (M3L2) | **done** | —             | `requests.test.ts` (9), Vitest harness, `isPendingPastExpiry` extract; R-04 |
+| 1 — Index + scheduler | done     | inline author | composite index + tx per doc in expireStalePendingRequests                  |
+| 2 — API consistency   | pending  | —             |                                                                             |
+| 3 — Seeker UX         | pending  | —             |                                                                             |
+| 4 — Verification      | pending  | —             |                                                                             |

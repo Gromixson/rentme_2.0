@@ -1,0 +1,19 @@
+# Pre-commit quality gates (M3L3) — install: npm run hooks:install
+# Complements Cursor afterFileEdit hooks; catches staged edits outside the agent loop.
+
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: '*.{ts,html,scss,json,md,yml,yaml,mjs,js,css}'
+      run: npx prettier --check {staged_files}
+    typecheck-app:
+      glob: 'src/**/*.ts'
+      exclude: '**/*.spec.ts'
+      run: npx tsc -p tsconfig.app.json --noEmit
+    typecheck-spec:
+      glob: 'src/**/*.spec.ts'
+      run: npx tsc -p tsconfig.spec.json --noEmit
+    typecheck-functions:
+      glob: 'functions/**/*.ts'
+      run: npx tsc -p functions/tsconfig.json --noEmit

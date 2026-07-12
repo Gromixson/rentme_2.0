@@ -4,4 +4,5 @@
 - **Course PRD (agent context):** [`prd.md`](prd.md) — aligned with `MVP.md`; greenfield schema for Mission Log / skills chain.
 - **Stack hand-off:** [`tech-stack.md`](tech-stack.md) — `starter_id: angular`, Firebase.
 - **Roadmap (build order):** [`roadmap.md`](roadmap.md) — vertical slices S-01…S-09, foundations F-01; north star S-06.
+- **Test plan (quality gates & risks):** [`test-plan.md`](test-plan.md) — risk map, baseline, rollout phases; M3L1 `/10x-test-plan`.
 - **Shape history:** [`shape-notes.md`](shape-notes.md) — original rental shaping; see **Product alignment** for pivot note.

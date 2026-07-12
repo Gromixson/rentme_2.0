@@ -4,6 +4,8 @@ Cross-change living documents that span multiple changes. Each project picks whi
 
 **Roadmap:** [`roadmap.md`](roadmap.md) — ordered vertical slices and foundations from `/10x-roadmap`; hand off slices to `/10x-plan` via Change ID.
 
+**Test plan:** [`test-plan.md`](test-plan.md) — risk map, quality gates, and test rollout phases from M3L1 `/10x-test-plan`; hand off to `/10x-new` + implement cycle in M3L2.
+
 **Implementation spec:** [`MVP.md`](../../MVP.md) at repo root; course PRD updated to match — see [`SOURCES.md`](SOURCES.md).
 
 ## Update convention

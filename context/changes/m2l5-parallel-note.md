@@ -5,10 +5,10 @@
 
 ## Wybrane slice'y
 
-| Slice | Change ID | Faza | Warstwa |
-|-------|-----------|------|---------|
-| A | `request-timeout-expiry` | Phase 1 | Infra (`firestore.indexes.json`) + backend scheduler (`functions/src/services/requests.ts`) |
-| B | `provider-accept-booking` | Phase 2 | Frontend provider UX (`provider-requests.component.ts`) |
+| Slice | Change ID                 | Faza    | Warstwa                                                                                     |
+| ----- | ------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| A     | `request-timeout-expiry`  | Phase 1 | Infra (`firestore.indexes.json`) + backend scheduler (`functions/src/services/requests.ts`) |
+| B     | `provider-accept-booking` | Phase 2 | Frontend provider UX (`provider-requests.component.ts`)                                     |
 
 ## Werdykt: **RÓWNOLEGŁE ✅**
 
@@ -43,9 +43,9 @@ Konflikt merge: **niski** — różne ścieżki w repo.
 
 ## Worktree'y
 
-| Path | Branch |
-|------|--------|
-| `d:\programowanie\rentme-wt-request-timeout-expiry` | `feature/request-timeout-expiry` |
+| Path                                                 | Branch                            |
+| ---------------------------------------------------- | --------------------------------- |
+| `d:\programowanie\rentme-wt-request-timeout-expiry`  | `feature/request-timeout-expiry`  |
 | `d:\programowanie\rentme-wt-provider-accept-booking` | `feature/provider-accept-booking` |
 
 Koordynacja: główne repo `d:\programowanie\rentme_2.0` (branch `master`).

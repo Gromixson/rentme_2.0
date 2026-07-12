@@ -19,13 +19,13 @@ sources:
 
 ## Stack snapshot
 
-| Layer | Production |
-|-------|------------|
-| Client | Angular 21 → Hosting (`dist/rentme/browser`) or `localhost:4200` |
-| Auth | Firebase Auth Email/Password (client SDK only) |
-| Data | Firestore (server via Admin SDK in Functions) |
-| API | HTTPS `api` + scheduled `expireRequests` in `europe-west1` |
-| Billing | **Blaze** required for Cloud Functions + Scheduler |
+| Layer   | Production                                                       |
+| ------- | ---------------------------------------------------------------- |
+| Client  | Angular 21 → Hosting (`dist/rentme/browser`) or `localhost:4200` |
+| Auth    | Firebase Auth Email/Password (client SDK only)                   |
+| Data    | Firestore (server via Admin SDK in Functions)                    |
+| API     | HTTPS `api` + scheduled `expireRequests` in `europe-west1`       |
+| Billing | **Blaze** required for Cloud Functions + Scheduler               |
 
 Hosting rewrites `/api/**` → function `api`; dev proxy targets `…/europe-west1/api` (see `proxy.conf.json`).
 
@@ -45,25 +45,25 @@ Hosting rewrites `/api/**` → function `api`; dev proxy targets `…/europe-wes
 
 ## Pre-mortem — top 3 failure scenarios
 
-| # | Scenario | How it surfaces | Mitigation |
-|---|----------|-----------------|------------|
-| 1 | **Deploy without App Engine** | `firebase deploy --only functions` → 403 on default GCS bucket for Functions v2 artifacts | Run `npm run setup:appengine` once per project (`europe-west` location in `scripts/setup-appengine.mjs`); wait ~1 min, redeploy |
-| 2 | **Production CORS blocks the real UI origin** | Seeker/provider flows fail after Hosting on custom URL; Network tab: CORS error on `/api/*` | Add exact origin to `allowedOrigins` in `functions/src/app.ts`, redeploy functions; prefer `*.web.app` / `*.firebaseapp.com` regexes already present |
-| 3 | **Auth Email/Password disabled** | Registration returns Firebase `auth/operation-not-allowed`; API register may surface Polish hint from `functions/src/routes/auth.ts` | `npm run setup:auth` (`firebase deploy --only auth` per `firebase.json` `auth.providers.emailPassword`) or enable manually in Console |
+| #   | Scenario                                      | How it surfaces                                                                                                                      | Mitigation                                                                                                                                           |
+| --- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Deploy without App Engine**                 | `firebase deploy --only functions` → 403 on default GCS bucket for Functions v2 artifacts                                            | Run `npm run setup:appengine` once per project (`europe-west` location in `scripts/setup-appengine.mjs`); wait ~1 min, redeploy                      |
+| 2   | **Production CORS blocks the real UI origin** | Seeker/provider flows fail after Hosting on custom URL; Network tab: CORS error on `/api/*`                                          | Add exact origin to `allowedOrigins` in `functions/src/app.ts`, redeploy functions; prefer `*.web.app` / `*.firebaseapp.com` regexes already present |
+| 3   | **Auth Email/Password disabled**              | Registration returns Firebase `auth/operation-not-allowed`; API register may surface Polish hint from `functions/src/routes/auth.ts` | `npm run setup:auth` (`firebase deploy --only auth` per `firebase.json` `auth.providers.emailPassword`) or enable manually in Console                |
 
 ---
 
 ## Unknown unknowns
 
-| Area | Risk | Notes for RentMe |
-|------|------|------------------|
-| **Billing (Blaze)** | Unexpected charges if schedulers/API abused | Blaze unlocks Functions + Scheduler; free tiers cover MVP traffic. **`expireRequests` every 1 min ≈ 43k invocations/month** plus Scheduler job — negligible at demo scale; revisit if query work per tick grows (Firestore reads on `PENDING` + `expiresAt`). |
-| **IAM** | Over-privileged default SA, leaked service account keys | Functions run as project default compute SA; needs Firestore access. No keys in repo — good. Review Firestore/Storage rules on each rules deploy. |
-| **CORS** | `onRequest({ cors: false })` — Firebase does not add CORS; Express owns it | Requests with no `Origin` (curl, some tools) allowed; browser calls from allowed origins only. `credentials: true` — cookies not used for API auth (Bearer token). |
-| **Cold starts** | Latency spikes, timeouts on slow mobile | Gen2 in `europe-west1`; consider `minInstances: 1` on `api` only if demos require it (cost). |
-| **Indexes** | Composite query on `requests` (`status` + `expiresAt`) | Ensure `firestore.indexes.json` deployed with rules; missing index → scheduler logs errors, expiry stuck. |
-| **Region lock-in** | All Functions + App Engine location must stay consistent | Project scripted for `europe-west` / `europe-west1`; cross-region adds latency and config pain. |
-| **ID token clock skew / expiry** | 401 on API after long idle tab | Client should refresh token before protected calls (standard Firebase SDK behaviour). |
+| Area                             | Risk                                                                       | Notes for RentMe                                                                                                                                                                                                                                              |
+| -------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Billing (Blaze)**              | Unexpected charges if schedulers/API abused                                | Blaze unlocks Functions + Scheduler; free tiers cover MVP traffic. **`expireRequests` every 1 min ≈ 43k invocations/month** plus Scheduler job — negligible at demo scale; revisit if query work per tick grows (Firestore reads on `PENDING` + `expiresAt`). |
+| **IAM**                          | Over-privileged default SA, leaked service account keys                    | Functions run as project default compute SA; needs Firestore access. No keys in repo — good. Review Firestore/Storage rules on each rules deploy.                                                                                                             |
+| **CORS**                         | `onRequest({ cors: false })` — Firebase does not add CORS; Express owns it | Requests with no `Origin` (curl, some tools) allowed; browser calls from allowed origins only. `credentials: true` — cookies not used for API auth (Bearer token).                                                                                            |
+| **Cold starts**                  | Latency spikes, timeouts on slow mobile                                    | Gen2 in `europe-west1`; consider `minInstances: 1` on `api` only if demos require it (cost).                                                                                                                                                                  |
+| **Indexes**                      | Composite query on `requests` (`status` + `expiresAt`)                     | Ensure `firestore.indexes.json` deployed with rules; missing index → scheduler logs errors, expiry stuck.                                                                                                                                                     |
+| **Region lock-in**               | All Functions + App Engine location must stay consistent                   | Project scripted for `europe-west` / `europe-west1`; cross-region adds latency and config pain.                                                                                                                                                               |
+| **ID token clock skew / expiry** | 401 on API after long idle tab                                             | Client should refresh token before protected calls (standard Firebase SDK behaviour).                                                                                                                                                                         |
 
 ---
 

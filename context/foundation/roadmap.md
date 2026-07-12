@@ -29,29 +29,29 @@ Rebuild greenfield na kursie — bez migracji danych z poprzedniej wersji. Kanon
 
 ## W skrócie
 
-| ID   | ID zmiany                 | Wynik (użytkownik może …)                                              | Wymagania wstępne | Odniesienia do PRD        | Status   |
-| ---- | ------------------------- | ---------------------------------------------------------------------- | ----------------- | ------------------------- | -------- |
-| F-01 | prod-observability-gate   | (fundament) podstawowa obserwowalność prod włączona przed demem        | —                 | NFR (błędy widoczne)      | proposed |
-| S-01 | auth-and-role-switch      | zarejestrować się, zalogować i przełączyć rolę SEEKER ↔ PROVIDER       | —                 | US-01, FR-001, FR-002     | in-progress |
-| S-02 | provider-profile-online   | uzupełnić profil providera (kategorie + stawka) i włączyć online       | S-01              | FR-003, FR-007            | ready    |
-| S-03 | categories-and-seed       | przeglądać kategorie z liczbą online i zaseedować dane demo            | S-01              | FR-004, FR-006            | ready    |
-| S-04 | discover-online-providers | zobaczyć listę tylko online providerów w wybranej kategorii            | S-02, S-03        | FR-005                    | ready    |
-| S-05 | seeker-send-request       | wysłać jedną wiadomość-request i śledzić status z timerem               | S-04              | US-01, FR-010, FR-011, FR-013 | ready |
-| S-06 | provider-accept-booking   | provider odpowiada TAK/NIE; po TAK powstaje booking u obu stron        | S-05              | US-02, FR-008, FR-012     | in-progress |
-| S-07 | complete-booking          | oznaczyć usługę jako zakończoną (COMPLETED)                            | S-06              | FR-009                    | ready    |
-| S-08 | rate-after-complete       | po COMPLETED wystawić ocenę 1–5; średnia aktualizuje się na liście     | S-07              | US-03, FR-014             | ready    |
-| S-09 | szukam-interest           | gdy nikt nie jest online, zasygnalizować „Szukam!”; provider widzi popyt | S-03            | FR-015                    | proposed |
+| ID   | ID zmiany                 | Wynik (użytkownik może …)                                                | Wymagania wstępne | Odniesienia do PRD            | Status      |
+| ---- | ------------------------- | ------------------------------------------------------------------------ | ----------------- | ----------------------------- | ----------- |
+| F-01 | prod-observability-gate   | (fundament) podstawowa obserwowalność prod włączona przed demem          | —                 | NFR (błędy widoczne)          | proposed    |
+| S-01 | auth-and-role-switch      | zarejestrować się, zalogować i przełączyć rolę SEEKER ↔ PROVIDER         | —                 | US-01, FR-001, FR-002         | in-progress |
+| S-02 | provider-profile-online   | uzupełnić profil providera (kategorie + stawka) i włączyć online         | S-01              | FR-003, FR-007                | ready       |
+| S-03 | categories-and-seed       | przeglądać kategorie z liczbą online i zaseedować dane demo              | S-01              | FR-004, FR-006                | ready       |
+| S-04 | discover-online-providers | zobaczyć listę tylko online providerów w wybranej kategorii              | S-02, S-03        | FR-005                        | ready       |
+| S-05 | seeker-send-request       | wysłać jedną wiadomość-request i śledzić status z timerem                | S-04              | US-01, FR-010, FR-011, FR-013 | ready       |
+| S-06 | provider-accept-booking   | provider odpowiada TAK/NIE; po TAK powstaje booking u obu stron          | S-05              | US-02, FR-008, FR-012         | in-progress |
+| S-07 | complete-booking          | oznaczyć usługę jako zakończoną (COMPLETED)                              | S-06              | FR-009                        | ready       |
+| S-08 | rate-after-complete       | po COMPLETED wystawić ocenę 1–5; średnia aktualizuje się na liście       | S-07              | US-03, FR-014                 | ready       |
+| S-09 | szukam-interest           | gdy nikt nie jest online, zasygnalizować „Szukam!”; provider widzi popyt | S-03              | FR-015                        | proposed    |
 
 ## Strumienie
 
 Pomoc nawigacyjna — grupuje elementy, które dzielą łańcuch wymagań wstępnych. Kanoniczna kolejność nadal znajduje się w grafie zależności poniżej.
 
-| Strumień | Temat                    | Łańcuch                                              | Uwaga                                                                 |
-| -------- | ------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------- |
-| A        | Konto i tożsamość        | `S-01` → `S-02` / `S-03`                             | `main_goal: learn` — najpierw Auth + role, potem równolegle profil i kategorie |
-| B        | Pętla klient → provider  | `S-04` → `S-05` → `S-06` → `S-07` → `S-08`         | Gwiazda przewodnia `S-06` w środku łańcucha; weryfikuje happy path §7 MVP.md |
-| C        | Popyt bez podaży         | `S-09`                                               | Should-have; dołącza do Strumienia A po `S-03`                        |
-| D        | Gotowość prod            | `F-01`                                               | Równolegle ze Strumieniem B; odblokowuje pewne demo na Hosting        |
+| Strumień | Temat                   | Łańcuch                                    | Uwaga                                                                          |
+| -------- | ----------------------- | ------------------------------------------ | ------------------------------------------------------------------------------ |
+| A        | Konto i tożsamość       | `S-01` → `S-02` / `S-03`                   | `main_goal: learn` — najpierw Auth + role, potem równolegle profil i kategorie |
+| B        | Pętla klient → provider | `S-04` → `S-05` → `S-06` → `S-07` → `S-08` | Gwiazda przewodnia `S-06` w środku łańcucha; weryfikuje happy path §7 MVP.md   |
+| C        | Popyt bez podaży        | `S-09`                                     | Should-have; dołącza do Strumienia A po `S-03`                                 |
+| D        | Gotowość prod           | `F-01`                                     | Równolegle ze Strumieniem B; odblokowuje pewne demo na Hosting                 |
 
 ## Baza
 
@@ -194,18 +194,18 @@ Fundamenty poniżej zakładają, że te elementy są obecne i NIE tworzą ich po
 
 ## Przekazanie do backlogu
 
-| ID mapy drogowej | ID zmiany                 | Sugerowany tytuł problemu                          | Gotowe do `/10x-plan` | Uwagi                                      |
-| ---------------- | ------------------------- | -------------------------------------------------- | --------------------- | ------------------------------------------ |
-| F-01             | prod-observability-gate   | Włączyć obserwowalność prod przed demem            | no                    | Checklist w `monitoring.md`                |
-| S-01             | auth-and-role-switch      | Zweryfikować auth i przełącznik roli               | yes                   | Kod obecny — plan na regresję/happy path   |
-| S-02             | provider-profile-online   | Zweryfikować profil providera i online/offline     | yes                   | —                                          |
-| S-03             | categories-and-seed       | Zweryfikować kategorie i seed                      | yes                   | —                                          |
-| S-04             | discover-online-providers | Zweryfikować listę tylko online providerów         | yes                   | —                                          |
-| S-05             | seeker-send-request       | Zweryfikować request + timer + TIMEOUT             | yes                   | Scenariusz negatywny MVP.md §7              |
+| ID mapy drogowej | ID zmiany                 | Sugerowany tytuł problemu                          | Gotowe do `/10x-plan` | Uwagi                                                   |
+| ---------------- | ------------------------- | -------------------------------------------------- | --------------------- | ------------------------------------------------------- |
+| F-01             | prod-observability-gate   | Włączyć obserwowalność prod przed demem            | no                    | Checklist w `monitoring.md`                             |
+| S-01             | auth-and-role-switch      | Zweryfikować auth i przełącznik roli               | yes                   | Kod obecny — plan na regresję/happy path                |
+| S-02             | provider-profile-online   | Zweryfikować profil providera i online/offline     | yes                   | —                                                       |
+| S-03             | categories-and-seed       | Zweryfikować kategorie i seed                      | yes                   | —                                                       |
+| S-04             | discover-online-providers | Zweryfikować listę tylko online providerów         | yes                   | —                                                       |
+| S-05             | seeker-send-request       | Zweryfikować request + timer + TIMEOUT             | yes                   | Scenariusz negatywny MVP.md §7                          |
 | S-06             | provider-accept-booking   | Zweryfikować accept → booking (gwiazda przewodnia) | yes (phase 1)         | **Priorytet** — API errors hardened; UX phase 2 pending |
-| S-07             | complete-booking          | Zweryfikować zakończenie usługi                    | yes                   | —                                          |
-| S-08             | rate-after-complete       | Zweryfikować ocenę i średnią                       | yes                   | Domknięcie happy path                      |
-| S-09             | szukam-interest           | Dopracować „Szukam!” (should-have)                 | no                    | Po zamknięciu must-have                    |
+| S-07             | complete-booking          | Zweryfikować zakończenie usługi                    | yes                   | —                                                       |
+| S-08             | rate-after-complete       | Zweryfikować ocenę i średnią                       | yes                   | Domknięcie happy path                                   |
+| S-09             | szukam-interest           | Dopracować „Szukam!” (should-have)                 | no                    | Po zamknięciu must-have                                 |
 
 ## Otwarte pytania dotyczące mapy drogowej
 

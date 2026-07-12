@@ -16,9 +16,7 @@ function normalizeRoles(input: unknown): UserRole[] {
     return ['SEEKER', 'PROVIDER'];
   }
   const unique = [
-    ...new Set(
-      input.filter((r): r is UserRole => r === 'SEEKER' || r === 'PROVIDER'),
-    ),
+    ...new Set(input.filter((r): r is UserRole => r === 'SEEKER' || r === 'PROVIDER')),
   ];
   return unique.length > 0 ? unique : ['SEEKER', 'PROVIDER'];
 }
@@ -59,24 +57,24 @@ router.post('/register', async (req, res) => {
       await withTimeout(db().collection('users').doc(record.uid).set(userDoc), REGISTER_TIMEOUT_MS);
 
       await withTimeout(
-        db()
-          .collection('providers')
-          .doc(record.uid)
-          .set({
-            userId: record.uid,
-            hourlyRate: 0,
-            bio: '',
-            isOnline: false,
-            averageRating: 0,
-            ratingCount: 0,
-            categories: [],
-            name: name.trim(),
-          }),
+        db().collection('providers').doc(record.uid).set({
+          userId: record.uid,
+          hourlyRate: 0,
+          bio: '',
+          isOnline: false,
+          averageRating: 0,
+          ratingCount: 0,
+          categories: [],
+          name: name.trim(),
+        }),
         REGISTER_TIMEOUT_MS,
       );
     } catch (inner) {
       if (record?.uid) {
-        await admin.auth().deleteUser(record.uid).catch(() => undefined);
+        await admin
+          .auth()
+          .deleteUser(record.uid)
+          .catch(() => undefined);
       }
       throw inner;
     }

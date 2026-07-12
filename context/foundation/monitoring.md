@@ -4,12 +4,12 @@ Minimal “camera before prod”: enable Firebase/Google Cloud signals in Consol
 
 ## Before you ship
 
-| Layer | What | Where |
-|-------|------|--------|
-| Web app | Performance Monitoring (page load, HTTP) | [Firebase Console → Performance](https://console.firebase.google.com/project/_/performance) |
-| Web app | Crashlytics (JS errors) — optional, web support is limited vs mobile | [Firebase Console → Crashlytics](https://console.firebase.google.com/project/_/crashlytics) |
-| API | Structured logs, errors, latency | [Google Cloud Console → Logging](https://console.cloud.google.com/logs) → filter `resource.type="cloud_function"` |
-| API | Error reporting (uncaught) | Same logs + [Error Reporting](https://console.cloud.google.com/errors) (auto for Cloud Functions on GCP) |
+| Layer   | What                                                                 | Where                                                                                                             |
+| ------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Web app | Performance Monitoring (page load, HTTP)                             | [Firebase Console → Performance](https://console.firebase.google.com/project/_/performance)                       |
+| Web app | Crashlytics (JS errors) — optional, web support is limited vs mobile | [Firebase Console → Crashlytics](https://console.firebase.google.com/project/_/crashlytics)                       |
+| API     | Structured logs, errors, latency                                     | [Google Cloud Console → Logging](https://console.cloud.google.com/logs) → filter `resource.type="cloud_function"` |
+| API     | Error reporting (uncaught)                                           | Same logs + [Error Reporting](https://console.cloud.google.com/errors) (auto for Cloud Functions on GCP)          |
 
 Replace `_` in Console URLs with your `projectId` (see `.firebaserc` / `environment.ts`).
 
@@ -94,9 +94,9 @@ Use `functions.logger` / `console.error` with structured fields (`uid`, `route`,
 
 ## Related files
 
-| File | Role |
-|------|------|
-| `src/environments/environment.prod.ts` | `enablePerformanceMonitoring` flag |
-| `src/app/core/firebase/firebase.providers.ts` | Optional `getPerformance()` init |
-| `README.md` | Link to this doc |
-| `firebase.json` | Hosting / Functions deploy targets |
+| File                                          | Role                               |
+| --------------------------------------------- | ---------------------------------- |
+| `src/environments/environment.prod.ts`        | `enablePerformanceMonitoring` flag |
+| `src/app/core/firebase/firebase.providers.ts` | Optional `getPerformance()` init   |
+| `README.md`                                   | Link to this doc                   |
+| `firebase.json`                               | Hosting / Functions deploy targets |

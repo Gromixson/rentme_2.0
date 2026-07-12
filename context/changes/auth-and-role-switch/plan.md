@@ -16,15 +16,15 @@ Po zamknięciu tego change:
 
 ## Baseline audit (2026-07-12)
 
-| Warstwa | Stan | Dowód |
-| ------- | ---- | ----- |
-| Client Auth | present | `auth.service.ts`, login/register components |
-| API auth | present | `functions/src/routes/auth.ts` — register, me, active-role; login → 410 |
-| Guards | present | `auth.guard.ts`, `guest.guard.ts`, `role.guard.ts`, `auth-ready.ts` |
-| Role switch offline | present | `auth.ts` L155–162 — SEEKER → `isOnline: false` |
-| Header toggle + redirect | present | `app-header.component.ts` |
-| Unit tests | partial | tylko `auth-ready.spec.ts` — brak testów `roleGuard` |
-| Error UX on role switch | partial | `toggleRole()` po cichu łyka błąd API |
+| Warstwa                  | Stan    | Dowód                                                                   |
+| ------------------------ | ------- | ----------------------------------------------------------------------- |
+| Client Auth              | present | `auth.service.ts`, login/register components                            |
+| API auth                 | present | `functions/src/routes/auth.ts` — register, me, active-role; login → 410 |
+| Guards                   | present | `auth.guard.ts`, `guest.guard.ts`, `role.guard.ts`, `auth-ready.ts`     |
+| Role switch offline      | present | `auth.ts` L155–162 — SEEKER → `isOnline: false`                         |
+| Header toggle + redirect | present | `app-header.component.ts`                                               |
+| Unit tests               | partial | tylko `auth-ready.spec.ts` — brak testów `roleGuard`                    |
+| Error UX on role switch  | partial | `toggleRole()` po cichu łyka błąd API                                   |
 
 **Wniosek:** implementacja ~90% — fazy skupiają się na weryfikacji, testach guardów i drobnej poprawce UX.
 
@@ -36,11 +36,11 @@ Po zamknięciu tego change:
 
 #### Intent + Contract per file
 
-| Plik | Intent | Contract |
-| ---- | ------ | -------- |
-| `src/app/core/auth/role.guard.spec.ts` | Pokryć reguły dostępu do tras rolowych | Nie zmieniać logiki guarda; testować redirect vs allow |
-| `context/changes/auth-and-role-switch/verification.md` | Checklista regresji S-01 dla człowieka | Kroki mapowane na FR-001/FR-002 |
-| `src/app/shared/layout/app-header.component.ts` | Toast przy błędzie przełączenia roli | Użyć `ToastService`; `err?.error?.error` |
+| Plik                                                   | Intent                                 | Contract                                               |
+| ------------------------------------------------------ | -------------------------------------- | ------------------------------------------------------ |
+| `src/app/core/auth/role.guard.spec.ts`                 | Pokryć reguły dostępu do tras rolowych | Nie zmieniać logiki guarda; testować redirect vs allow |
+| `context/changes/auth-and-role-switch/verification.md` | Checklista regresji S-01 dla człowieka | Kroki mapowane na FR-001/FR-002                        |
+| `src/app/shared/layout/app-header.component.ts`        | Toast przy błędzie przełączenia roli   | Użyć `ToastService`; `err?.error?.error`               |
 
 #### Success Criteria
 
@@ -61,10 +61,10 @@ Po fazie 1: opcjonalny szybki smoke w przeglądarce (register/login) — nie blo
 
 #### Intent + Contract
 
-| Plik | Intent | Contract |
-| ---- | ------ | -------- |
-| `verification.md` | Wyniki manual smoke | Pass/fail per krok |
-| `context/foundation/roadmap.md` | Status S-01 | Tylko pole Status + ewentualnie ## Zrobione |
+| Plik                            | Intent              | Contract                                    |
+| ------------------------------- | ------------------- | ------------------------------------------- |
+| `verification.md`               | Wyniki manual smoke | Pass/fail per krok                          |
+| `context/foundation/roadmap.md` | Status S-01         | Tylko pole Status + ewentualnie ## Zrobione |
 
 ---
 
@@ -74,10 +74,10 @@ Po fazie 1: opcjonalny szybki smoke w przeglądarce (register/login) — nie blo
 
 ## Risks / Open Questions
 
-| Ryzyko | Mitygacja |
-| ------ | --------- |
-| Firebase Console nie skonfigurowany | README + `setup:auth`; verification.md notuje wymagania |
-| Regresja guardów przy refaktorze routingu | Testy Phase 1 |
+| Ryzyko                                        | Mitygacja                                               |
+| --------------------------------------------- | ------------------------------------------------------- |
+| Firebase Console nie skonfigurowany           | README + `setup:auth`; verification.md notuje wymagania |
+| Regresja guardów przy refaktorze routingu     | Testy Phase 1                                           |
 | Provider online po switch — tylko server-side | Manual step w verification: sprawdzić offline po SEEKER |
 
 ## Success Criteria (change-level)
@@ -90,8 +90,8 @@ Po fazie 1: opcjonalny szybki smoke w przeglądarce (register/login) — nie blo
 
 ## Progress
 
-| Phase | Status | Commit | Notes |
-| ----- | ------ | ------ | ----- |
-| 1 | **done** | _(brak — git user.name/email nie skonfigurowany)_ | `role.guard.spec.ts` (5 testów), toast w `app-header`, `verification.md`; `npm test` 8/8 OK; `npm run build` OK |
-| 2 | pending | — | Manual smoke + roadmap |
-| 3 | pending | — | Archive |
+| Phase | Status   | Commit                                            | Notes                                                                                                           |
+| ----- | -------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1     | **done** | _(brak — git user.name/email nie skonfigurowany)_ | `role.guard.spec.ts` (5 testów), toast w `app-header`, `verification.md`; `npm test` 8/8 OK; `npm run build` OK |
+| 2     | pending  | —                                                 | Manual smoke + roadmap                                                                                          |
+| 3     | pending  | —                                                 | Archive                                                                                                         |

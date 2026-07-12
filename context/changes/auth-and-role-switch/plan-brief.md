@@ -19,19 +19,19 @@ Stabilny auth z testami guardów, toastem przy błędzie roli, checklistą manua
 
 ## Key Decisions
 
-| Decyzja | Wybór | Uzasadnienie |
-| ------- | ----- | ------------ |
-| Scope | Weryfikacja, nie rewrite | Baseline present w repo |
-| Phase 1 focus | Testy + UX + checklist | Najszybszy sygnał jakości |
-| Login endpoint | Nie dotykać 410 | AGENTS.md hard rule |
+| Decyzja        | Wybór                    | Uzasadnienie              |
+| -------------- | ------------------------ | ------------------------- |
+| Scope          | Weryfikacja, nie rewrite | Baseline present w repo   |
+| Phase 1 focus  | Testy + UX + checklist   | Najszybszy sygnał jakości |
+| Login endpoint | Nie dotykać 410          | AGENTS.md hard rule       |
 
 ## Phases at a Glance
 
-| Phase | Deliverable | Ryzyko |
-| ----- | ----------- | ------ |
-| 1 | role.guard.spec.ts, toast, verification.md, build/test | Niskie |
-| 2 | Manual smoke, roadmap status | Wymaga Firebase |
-| 3 | Archive | — |
+| Phase | Deliverable                                            | Ryzyko          |
+| ----- | ------------------------------------------------------ | --------------- |
+| 1     | role.guard.spec.ts, toast, verification.md, build/test | Niskie          |
+| 2     | Manual smoke, roadmap status                           | Wymaga Firebase |
+| 3     | Archive                                                | —               |
 
 ## Success (summary)
 

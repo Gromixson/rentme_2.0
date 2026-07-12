@@ -22,9 +22,7 @@ router.get('/my', requireAuth, async (req: AuthedRequest, res) => {
       map.set(doc.id, { id: doc.id, ...(doc.data() as BookingDoc) });
     }
   }
-  const items = [...map.values()].sort(
-    (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis(),
-  );
+  const items = [...map.values()].sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
   res.json(items);
 });
 

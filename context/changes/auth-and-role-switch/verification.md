@@ -54,16 +54,16 @@ Mapowanie: FR-001 (register/login), FR-002 (role switch), MVP §2–§3.1.
 
 ## Results (Phase 2)
 
-| Step | Pass/Fail | Notes |
-| ---- | --------- | ----- |
-| Register | | |
-| Login | | |
-| Role switch | | |
-| Offline on SEEKER | | |
-| Guards | | |
-| Logout | | |
+| Step              | Pass/Fail | Notes |
+| ----------------- | --------- | ----- |
+| Register          |           |       |
+| Login             |           |       |
+| Role switch       |           |       |
+| Offline on SEEKER |           |       |
+| Guards            |           |       |
+| Logout            |           |       |
 
 ## Sign-off
 
 - [ ] Wszystkie kroki Pass — S-01 gotowy do archive
-- [ ] Blocker: _______________
+- [ ] Blocker: **\*\***\_\_\_**\*\***

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "node scripts/hooks/prettier-after-edit.mjs",
+        "timeout": 30
+      },
+      {
+        "command": "node scripts/hooks/typecheck-after-edit.mjs",
+        "timeout": 60
+      },
+      {
+        "command": "node scripts/hooks/test-auth-after-edit.mjs",
+        "timeout": 120
+      },
+      {
+        "command": "node scripts/hooks/test-functions-after-edit.mjs",
+        "timeout": 120
+      }
+    ]
+  }
+}

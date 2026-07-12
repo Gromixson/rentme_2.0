@@ -1,15 +1,17 @@
 import { db, REQUEST_TIMEOUT_MS, Timestamp } from '../db';
 import type { RequestDoc, RequestStatus } from '../types';
 
+export function isPendingPastExpiry(data: RequestDoc, nowMs: number = Date.now()): boolean {
+  return data.status === 'PENDING' && data.expiresAt.toMillis() <= nowMs;
+}
+
 export async function expirePendingRequest(requestId: string): Promise<RequestStatus | null> {
   const ref = db().collection('requests').doc(requestId);
   return db().runTransaction(async (tx) => {
     const snap = await tx.get(ref);
     if (!snap.exists) return null;
     const data = snap.data() as RequestDoc;
-    if (data.status !== 'PENDING') return data.status;
-    const now = Date.now();
-    if (data.expiresAt.toMillis() > now) return data.status;
+    if (!isPendingPastExpiry(data)) return data.status;
     tx.update(ref, { status: 'TIMEOUT' });
     return 'TIMEOUT';
   });
@@ -40,7 +42,7 @@ export async function resolveRequestStatus(
   requestId: string,
   data: RequestDoc,
 ): Promise<RequestStatus> {
-  if (data.status === 'PENDING' && data.expiresAt.toMillis() <= Date.now()) {
+  if (isPendingPastExpiry(data)) {
     await expirePendingRequest(requestId);
     return 'TIMEOUT';
   }
