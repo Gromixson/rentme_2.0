@@ -56,7 +56,7 @@
 | `context/README.md` + link w foundation  | ✅                                   |
 | `madge@8.0.0` devDep                     | ✅                                   |
 
-**Architect path — pozostałe:** M4L5 domain.
+**Architect path:** **✅ Moduł 4 ukończony** (L2–L5, 2026-07-12).
 
 ### M3L4 — E2E (Playwright)
 
@@ -85,7 +85,7 @@
 - **Status:** **✅ ukończone** (2026-07-12)
 - **Change-id:** `provider-accept-booking-flow` (S-06 north star)
 - **Wykonane:** `context/map/repo-map.md` (minimalna mapa M4L2); `context/changes/provider-accept-booking-flow/change.md` + `research.md` (E2E trace, dług techniczny, structural claims + weryfikacja rg); ast-grep niedostępny na Win — fallback rg udokumentowany.
-- **Architect path pending:** **L5 domain** (nested domain context) — po implementacji planu `refactor-opportunities` lub przy sygnałach skali.
+- **Powiązanie z L5:** `context/domain/` + `architect-report.md`; plan implementacji w `refactor-opportunities/plan.md`.
 
 ### M4L4 — Refaktoryzacja z agentem (plan)
 
@@ -93,13 +93,7 @@
 - **Change-id:** `refactor-opportunities` (osobny od `provider-accept-booking-flow`)
 - **Wykonane:** `change.md` + `research.md` (klasyfikacja P1–P10, ranking, 3 perspektywy) + weryfikacja rg (ast-grep niedostępny Win) + `plan.md` / `plan-brief.md` + `plan-review.md`
 - **Decyzja:** guard-first — Vitest respond przed refaktorem; wspólny guard expiry; Strangler extract serwisu; Domain Model odrzucony na MVP
-- **Architect path pending:** **M4L5 domain** — nested domain context dla Request/Booking
-
-### M4L4 — Plan refaktoryzacji
-
-- **Status:** **✅ ukończone** (2026-07-12, zsyntetyzowane z M4L3 przy L5)
-- **Change-id:** `refactor-opportunities`
-- **Wykonane:** `context/changes/refactor-opportunities/plan.md` — Opcja A guard-first + Vitest respond; fazy 0–3; sekcja „czego NIE robimy”.
+- **Architect path:** L5 ✅ — patrz sekcja M4L5 poniżej.
 
 ### M4L5 — Domain distillation + architect report
 
@@ -156,9 +150,8 @@
 | M4L1 context TOC     | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
 | M4L2 repo-map        | `context/map/repo-map.md` + artefakty 1–3                                    |
 | M4L3 deep focus S-06 | `provider-accept-booking-flow/` — change.md + research.md (E2E trace, dług)  |
-| M4L4 refactor plan   | `refactor-opportunities/plan.md` — guard-first, fazy 0–3                     |
-| M4L5 domain + report | `context/domain/*`, `architect-report.md` — DDD + zamknięcie M4              |
 | M4L4 refactor plan   | `refactor-opportunities/` — research + plan guard-first (bez kodu)           |
+| M4L5 domain + report | `context/domain/*`, `architect-report.md` — DDD + zamknięcie M4              |
 
 ---
 

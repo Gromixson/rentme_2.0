@@ -7,6 +7,14 @@ Katalog na dokumenty kursu 10xDevs i artefakty planowania/implementacji.
 **[`map/repo-map.md`](map/repo-map.md)** — operacyjna mapa projektu (teren, struktura, kontrybutorzy, ryzyka).  
 Artefakty pośrednie: [`map/artifact-1-territory.md`](map/artifact-1-territory.md), [`map/artifact-2-structure.md`](map/artifact-2-structure.md), [`map/artifact-3-contributors.md`](map/artifact-3-contributors.md).
 
+## Raport architekta (M4L5 — zamknięcie Modułu 4)
+
+**[`architect-report.md`](architect-report.md)** — synteza L2–L5 (mapa, S-06, plan refaktoru, DDD).
+
+## Domena DDD (M4L5)
+
+**[`domain/README.md`](domain/README.md)** — destylacja domeny, niezmienniki, Anti-Corruption Layer.
+
 ## Podkatalogi
 
 | Katalog                      | Opis                                                   |
@@ -16,3 +24,4 @@ Artefakty pośrednie: [`map/artifact-1-territory.md`](map/artifact-1-territory.m
 | [`deployment/`](deployment/) | deploy plan i wyniki                                   |
 | [`archive/`](archive/)       | zamknięte zmiany (immutable)                           |
 | [`map/`](map/)               | repo-map i skany M4L2+                                 |
+| [`domain/`](domain/)         | destylacja domeny, agregaty, ACL (M4L5)                |
