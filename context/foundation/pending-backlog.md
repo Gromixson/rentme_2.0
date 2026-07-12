@@ -37,6 +37,21 @@
 
 ## W toku / częściowe
 
+### M4L2 — Repo map (Architect)
+
+**Status:** **✅ ukończone** (2026-07-12)
+
+| Element                                  | Stan                                 |
+| ---------------------------------------- | ------------------------------------ |
+| `context/map/artifact-1-territory.md`    | ✅ git wide scan                     |
+| `context/map/artifact-2-structure.md`    | ✅ madge + warstwy Angular/Functions |
+| `context/map/artifact-3-contributors.md` | ✅ autorzy per strefa                |
+| `context/map/repo-map.md`                | ✅ synteza 7 sekcji                  |
+| `context/README.md` + link w foundation  | ✅                                   |
+| `madge@8.0.0` devDep                     | ✅                                   |
+
+**Architect path — pozostałe:** M4L3 research · M4L4 plan · M4L5 domain.
+
 ### M3L4 — E2E (Playwright)
 
 **Status:** implementacja **ukończona w repo**; pełny happy path **niezweryfikowany z creds**.
@@ -58,6 +73,13 @@
 - **Status:** **✅ ukończone** (2026-07-12)
 - **Wykonane:** refaktor `AGENTS.md` jako TOC (~76→68 linii); `context/README.md`; audyt w `context/foundation/agents-md-review.md`; ladder **step 1** (bez per-module AGENTS/context).
 - **Architect path pending:** L2–L5 — per-area rules, nested context, split AGENTS — dopiero przy sygnałach skali (multi-team, >200 linii reguł, powtarzalne błędy per moduł).
+
+### M4L3 — Deep focus (feature overview + technical debt)
+
+- **Status:** **✅ ukończone** (2026-07-12)
+- **Change-id:** `provider-accept-booking-flow` (S-06 north star)
+- **Wykonane:** `context/map/repo-map.md` (minimalna mapa M4L2); `context/changes/provider-accept-booking-flow/change.md` + `research.md` (E2E trace, dług techniczny, structural claims + weryfikacja rg); ast-grep niedostępny na Win — fallback rg udokumentowany.
+- **Architect path pending:** **L4 plan** (per-area planowanie zmian), **L5 domain** (nested domain context) — po sygnałach skali lub przed większym refaktorem respond/timeout.
 
 ### M3L5 — debugging lesson (swallowed errors)
 
@@ -101,6 +123,7 @@
 | Merge baseline      | `d117768` — parallel slices, hooks, Vitest, CI gates                         |
 | M3L4 E2E scaffold   | `e599836` — Playwright + specs (bez pełnego run z creds)                     |
 | M4L1 context TOC    | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
+| M4L2 repo-map       | `context/map/repo-map.md` + artefakty 1–3                                    |
 
 ---
 
@@ -124,3 +147,4 @@
 - [`deployment-result.md`](../deployment/deployment-result.md) — prod deploy + blockery M1L5
 - [`m2l5-parallel-note.md`](../changes/m2l5-parallel-note.md) — worktree'y i merge order
 - [`e2e/README.md`](../../e2e/README.md) — env vars Playwright
+- [`../map/repo-map.md`](../map/repo-map.md) — mapa operacyjna M4L2

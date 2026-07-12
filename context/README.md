@@ -1,25 +1,18 @@
 # Context — RentMe 2.0
 
-Centralized agent and course context. **Ladder step 1:** one root `AGENTS.md` + this tree — no per-module `AGENTS.md` or nested `context/` until the repo outgrows MVP scale.
+Katalog na dokumenty kursu 10xDevs i artefakty planowania/implementacji.
 
-## Layout
+## Mapa repozytorium (M4L2)
 
-| Path                                  | Purpose                                                                     |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| [`foundation/`](foundation/README.md) | Living docs — PRD, roadmap, tech-stack, test-plan, lessons, pending backlog |
-| [`changes/<id>/`](changes/README.md)  | One folder per in-flight change (plan, research, reviews)                   |
-| [`archive/`](archive/README.md)       | Completed changes (read-only)                                               |
-| [`deployment/`](deployment/)          | Deploy plans and results                                                    |
+**[`map/repo-map.md`](map/repo-map.md)** — operacyjna mapa projektu (teren, struktura, kontrybutorzy, ryzyka).  
+Artefakty pośrednie: [`map/artifact-1-territory.md`](map/artifact-1-territory.md), [`map/artifact-2-structure.md`](map/artifact-2-structure.md), [`map/artifact-3-contributors.md`](map/artifact-3-contributors.md).
 
-## Start here
+## Podkatalogi
 
-- **Onboarding:** root [`AGENTS.md`](../AGENTS.md) — hard rules, commands, architecture pointers
-- **Product:** [`foundation/prd.md`](foundation/prd.md), implementation [`MVP.md`](../MVP.md)
-- **What's next:** [`foundation/pending-backlog.md`](foundation/pending-backlog.md)
-- **App code rules:** [`.cursor/rules/rentme-project.mdc`](../.cursor/rules/rentme-project.mdc) (`src/**` only)
-
-## Conventions
-
-- **Foundation** — edit-in-place; cross-change truth (see [`foundation/README.md`](foundation/README.md))
-- **Changes** — scoped to one change ID; archive to `archive/` when done
-- **Do not** put change-scoped artifacts in `foundation/` or overwrite `context/` during scaffold
+| Katalog                      | Opis                                                   |
+| ---------------------------- | ------------------------------------------------------ |
+| [`foundation/`](foundation/) | PRD, tech-stack, roadmap, test-plan — dokumenty „żywe” |
+| [`changes/`](changes/)       | plany i weryfikacje per change ID                      |
+| [`deployment/`](deployment/) | deploy plan i wyniki                                   |
+| [`archive/`](archive/)       | zamknięte zmiany (immutable)                           |
+| [`map/`](map/)               | repo-map i skany M4L2+                                 |

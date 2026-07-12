@@ -8,6 +8,8 @@ Cross-change living documents that span multiple changes. Each project picks whi
 
 **Pending backlog:** [`pending-backlog.md`](pending-backlog.md) — blockery (10x auth, E2E creds, git remote) i odłożone lekcje/kroki; wróć tu po przerwie.
 
+**Repo map (M4L2):** [`../map/repo-map.md`](../map/repo-map.md) — operacyjna mapa kodu, coupling i strefy ryzyka.
+
 **Implementation spec:** [`MVP.md`](../../MVP.md) at repo root; course PRD updated to match — see [`SOURCES.md`](SOURCES.md).
 
 ## Update convention

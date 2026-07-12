@@ -53,6 +53,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "lefthook": "^1.13.6",
+    "madge": "^8.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "zone.js": "^0.15.0"
