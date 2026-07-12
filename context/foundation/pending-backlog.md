@@ -109,21 +109,22 @@
 
 ## Ukończone (skrót — żeby backlog był użyteczny)
 
-| Element             | Dowód / commit                                                               |
-| ------------------- | ---------------------------------------------------------------------------- |
-| M2L1 roadmap        | `context/foundation/roadmap.md`                                              |
-| M2L2 plan           | change plany pod `context/changes/`                                          |
-| M2L3 review         | impl-review w changes                                                        |
-| M2L4 research       | `infra-research.md`, `context/deployment/`                                   |
-| M2L5 parallel merge | `context/changes/m2l5-parallel-note.md`; merge worktree → `d117768`          |
-| M3L1 test-plan      | `context/foundation/test-plan.md`                                            |
-| M3L2 Vitest         | `request-timeout-expiry` phase 0; `npm run functions:test`                   |
-| M3L3 hooks          | lefthook + `.cursor/hooks.json`; w `d117768`                                 |
-| M1L5 deploy         | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app |
-| Merge baseline      | `d117768` — parallel slices, hooks, Vitest, CI gates                         |
-| M3L4 E2E scaffold   | `e599836` — Playwright + specs (bez pełnego run z creds)                     |
-| M4L1 context TOC    | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
-| M4L2 repo-map       | `context/map/repo-map.md` + artefakty 1–3                                    |
+| Element              | Dowód / commit                                                               |
+| -------------------- | ---------------------------------------------------------------------------- |
+| M2L1 roadmap         | `context/foundation/roadmap.md`                                              |
+| M2L2 plan            | change plany pod `context/changes/`                                          |
+| M2L3 review          | impl-review w changes                                                        |
+| M2L4 research        | `infra-research.md`, `context/deployment/`                                   |
+| M2L5 parallel merge  | `context/changes/m2l5-parallel-note.md`; merge worktree → `d117768`          |
+| M3L1 test-plan       | `context/foundation/test-plan.md`                                            |
+| M3L2 Vitest          | `request-timeout-expiry` phase 0; `npm run functions:test`                   |
+| M3L3 hooks           | lefthook + `.cursor/hooks.json`; w `d117768`                                 |
+| M1L5 deploy          | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app |
+| Merge baseline       | `d117768` — parallel slices, hooks, Vitest, CI gates                         |
+| M3L4 E2E scaffold    | `e599836` — Playwright + specs (bez pełnego run z creds)                     |
+| M4L1 context TOC     | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
+| M4L2 repo-map        | `context/map/repo-map.md` + artefakty 1–3                                    |
+| M4L3 deep focus S-06 | `provider-accept-booking-flow/` — change.md + research.md (E2E trace, dług)  |
 
 ---
 
