@@ -9,8 +9,8 @@
 
 ### Firebase â€” nowy projekt (migracja)
 
-- **Status (2026-07-12, deploy):** **`rentme2-76ba8`** na **Blaze** — wdrożono Auth (Email/Password), Firestore Native `(default)` w **eur3** (rules + indexes), Functions **`api`** + **`expireRequests`** (`europe-west1`), Hosting **https://rentme2-76ba8.web.app** (rewrite `/api/**` → OK).
-- **Pozostało ręcznie:** **Firebase Storage** — [Get Started](https://console.firebase.google.com/project/rentme2-76ba8/storage), potem `firebase deploy --only storage`; lokalne **`environment.ts` / `environment.prod.ts`** z kluczami SDK z Console; konta **E2E** w tym projekcie (`e2e/.env.example`). Stary `rentme-b5e34` — archiwum / migracja danych opcjonalnie.
+- **Status (2026-07-12, deploy):** **`rentme2-76ba8`** na **Blaze** — wdrożono Auth (Email/Password), Firestore Native `(default)` w **eur3** (rules + indexes), Functions **`api`** + **`expireRequests`** (`europe-west1`), Hosting **https://rentme2-76ba8.web.app** (rewrite `/api/**` → OK), **Storage** (`storage.rules` wdrożone 2026-07-12).
+- **Pozostało ręcznie:** lokalne **`environment.ts` / `environment.prod.ts`** z kluczami SDK z Console; konta **E2E** w tym projekcie (`e2e/.env.example`). Stary `rentme-b5e34` — archiwum / migracja danych opcjonalnie.
 - **Uwaga:** pierwsza baza Firestore była w **Datastore mode** — usunięta i utworzona ponownie jako **Native** (pusty projekt).
 
 ### 10x CLI auth
@@ -106,6 +106,19 @@
   - `context/domain/README.md` + linki w `context/README.md`
 - **ModuĹ‚ 4 Architect path:** **KOMPLETNY** (L1 context TOC Â· L2 repo-map Â· L3 S-06 research Â· L4 plan Â· L5 domain + report)
 
+### M5L2 â€” Agent code review (Vercel AI SDK 6)
+
+**Status:** **âś… ukoĹ„czone** (2026-07-12)
+
+| Element                           | Stan                                    |
+| --------------------------------- | --------------------------------------- |
+| `agents/code-review/`             | âś… standalone ESM + TypeScript         |
+| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary |
+| OpenRouter + metryki `totalUsage` | âś… stderr                              |
+| `AGENTS.md` inject                | âś… relative path z repo root           |
+| Root script `review:diff`         | âś…                                     |
+| CI integracja                     | âŹł M5L3 (poza scope L2)                |
+
 ### M3L5 â€” debugging lesson (swallowed errors)
 
 - **Status:** **NIE rozpoczÄ™te**
@@ -134,24 +147,26 @@
 
 ## UkoĹ„czone (skrĂłt â€” ĹĽeby backlog byĹ‚ uĹĽyteczny)
 
-| Element              | DowĂłd / commit                                                                |
-| -------------------- | ------------------------------------------------------------------------------ |
-| M2L1 roadmap         | `context/foundation/roadmap.md`                                                |
-| M2L2 plan            | change plany pod `context/changes/`                                            |
-| M2L3 review          | impl-review w changes                                                          |
-| M2L4 research        | `infra-research.md`, `context/deployment/`                                     |
-| M2L5 parallel merge  | `context/changes/m2l5-parallel-note.md`; merge worktree â†’ `d117768`          |
-| M3L1 test-plan       | `context/foundation/test-plan.md`                                              |
-| M3L2 Vitest          | `request-timeout-expiry` phase 0; `npm run functions:test`                     |
-| M3L3 hooks           | lefthook + `.cursor/hooks.json`; w `d117768`                                   |
-| M1L5 deploy          | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app   |
-| Merge baseline       | `d117768` â€” parallel slices, hooks, Vitest, CI gates                         |
-| M3L4 E2E scaffold    | `e599836` â€” Playwright + specs (bez peĹ‚nego run z creds)                    |
-| M4L1 context TOC     | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`               |
-| M4L2 repo-map        | `context/map/repo-map.md` + artefakty 1â€“3                                    |
-| M4L3 deep focus S-06 | `provider-accept-booking-flow/` â€” change.md + research.md (E2E trace, dĹ‚ug) |
-| M4L4 refactor plan   | `refactor-opportunities/` â€” research + plan guard-first (bez kodu)           |
-| M4L5 domain + report | `context/domain/*`, `architect-report.md` â€” DDD + zamkniÄ™cie M4             |
+| Element                | DowĂłd / commit                                                                |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| M2L1 roadmap           | `context/foundation/roadmap.md`                                                |
+| M2L2 plan              | change plany pod `context/changes/`                                            |
+| M2L3 review            | impl-review w changes                                                          |
+| M2L4 research          | `infra-research.md`, `context/deployment/`                                     |
+| M2L5 parallel merge    | `context/changes/m2l5-parallel-note.md`; merge worktree â†’ `d117768`          |
+| M3L1 test-plan         | `context/foundation/test-plan.md`                                              |
+| M3L2 Vitest            | `request-timeout-expiry` phase 0; `npm run functions:test`                     |
+| M3L3 hooks             | lefthook + `.cursor/hooks.json`; w `d117768`                                   |
+| M1L5 deploy            | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app   |
+| Merge baseline         | `d117768` â€” parallel slices, hooks, Vitest, CI gates                         |
+| M3L4 E2E scaffold      | `e599836` â€” Playwright + specs (bez peĹ‚nego run z creds)                    |
+| M4L1 context TOC       | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`               |
+| M4L2 repo-map          | `context/map/repo-map.md` + artefakty 1â€“3                                    |
+| M4L3 deep focus S-06   | `provider-accept-booking-flow/` â€” change.md + research.md (E2E trace, dĹ‚ug) |
+| M4L4 refactor plan     | `refactor-opportunities/` â€” research + plan guard-first (bez kodu)           |
+| Firebase Storage rules | `rentme2-76ba8` — `storage.rules` deploy 2026-07-12                            |
+| M4L5 domain + report   | `context/domain/*`, `architect-report.md` â€” DDD + zamkniÄ™cie M4             |
+| M5L2 code review agent | `agents/code-review/` â€” ToolLoopAgent, OpenRouter, `npm run review:diff`     |
 
 ---
 

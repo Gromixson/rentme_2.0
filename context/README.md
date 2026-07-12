@@ -15,10 +15,17 @@ Artefakty pośrednie: [`map/artifact-1-territory.md`](map/artifact-1-territory.m
 
 **[`domain/README.md`](domain/README.md)** — destylacja domeny, niezmienniki, Anti-Corruption Layer.
 
+## Champion — AI Internal Builders (M5L1)
+
+**[`champion/opportunity-map.md`](champion/opportunity-map.md)** — mapa możliwości (sygnały tarcia, Kup/Uzupełnij/Zbuduj).  
+**[`champion/mom-test-questions.md`](champion/mom-test-questions.md)** — pytania Mom Test (draft).  
+Digest statusu: `npm run status:digest` → [`scripts/mission-status.mjs`](../scripts/mission-status.mjs); opcjonalny zapis: `npm run status:digest:write`.
+
 ## Podkatalogi
 
 | Katalog                      | Opis                                                   |
 | ---------------------------- | ------------------------------------------------------ |
+| [`champion/`](champion/)     | M5L1 — opportunity map, helper digest, Mom Test        |
 | [`foundation/`](foundation/) | PRD, tech-stack, roadmap, test-plan — dokumenty „żywe” |
 | [`changes/`](changes/)       | plany i weryfikacje per change ID                      |
 | [`deployment/`](deployment/) | deploy plan i wyniki                                   |

@@ -15,13 +15,16 @@
     "test": "ng test --no-watch --browsers=ChromeHeadless",
     "hooks:install": "lefthook install",
     "hooks:verify": "node scripts/hooks/verify-hooks.mjs",
+    "status:digest": "node scripts/mission-status.mjs",
+    "status:digest:write": "node scripts/mission-status.mjs --write",
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "e2e:report": "playwright show-report",
     "emulators": "firebase emulators:start --import=./.firebase-emulator-data --export-on-exit",
-    "emulators:exec": "firebase emulators:exec"
+    "emulators:exec": "firebase emulators:exec",
+    "review:diff": "npm run review --prefix agents/code-review"
   },
   "private": true,
   "packageManager": "npm@10.9.4",
