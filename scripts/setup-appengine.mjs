@@ -1,13 +1,13 @@
-/**
+﻿/**
  * Creates App Engine app (required for Cloud Functions v2 upload bucket).
- * Uses Firebase CLI refresh token — run: firebase login
+ * Uses Firebase CLI refresh token â€” run: firebase login
  */
 import { readFileSync, existsSync } from 'fs';
 import { homedir } from 'os';
 import { join } from 'path';
 import { OAuth2Client } from 'google-auth-library';
 
-const PROJECT_ID = 'rentme-b5e34';
+import { PROJECT_ID } from './read-firebase-project.mjs';
 /** Matches Cloud Functions region europe-west1. */
 const LOCATION_ID = 'europe-west';
 
@@ -35,7 +35,7 @@ async function getAccessToken() {
   client.setCredentials({ refresh_token: loadRefreshToken() });
   const { token } = await client.getAccessToken();
   if (!token) {
-    throw new Error('Nie udało się uzyskać access token.');
+    throw new Error('Nie udaĹ‚o siÄ™ uzyskaÄ‡ access token.');
   }
   return token;
 }
@@ -91,7 +91,10 @@ async function createApp(token) {
     token,
   );
   if (res.ok) {
-    console.log(`App Engine create started (${LOCATION_ID}). Operation:`, res.json.name ?? res.json);
+    console.log(
+      `App Engine create started (${LOCATION_ID}). Operation:`,
+      res.json.name ?? res.json,
+    );
     return;
   }
   const msg = JSON.stringify(res.json);

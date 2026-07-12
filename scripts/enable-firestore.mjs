@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Enables Firestore API and creates (default) database using Firebase CLI login.
  * Requires: firebase login (same account as firebase login:list).
  */
@@ -7,7 +7,7 @@ import { homedir } from 'os';
 import { join } from 'path';
 import { OAuth2Client } from 'google-auth-library';
 
-const PROJECT_ID = 'rentme-b5e34';
+import { PROJECT_ID } from './read-firebase-project.mjs';
 const LOCATION = 'eur3';
 const CLIENT_ID =
   process.env.FIREBASE_CLIENT_ID ||
@@ -33,7 +33,7 @@ async function getAccessToken() {
   client.setCredentials({ refresh_token: loadRefreshToken() });
   const { token } = await client.getAccessToken();
   if (!token) {
-    throw new Error('Nie udało się uzyskać access token.');
+    throw new Error('Nie udaĹ‚o siÄ™ uzyskaÄ‡ access token.');
   }
   return token;
 }

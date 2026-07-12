@@ -6,11 +6,11 @@ Aplikacja typu Fixly/Uber: klient wybiera kategorię, wysyła jedną wiadomość
 
 ## Struktura repozytorium
 
-| Ścieżka | Opis |
-|---------|------|
-| `src/` | Angular 21 (standalone) — frontend pozostaje w korzeniu repo (nie `frontend/`) |
-| `functions/` | Firebase Cloud Functions + Express API (`/api/*`) |
-| `firebase.json`, `firestore.rules`, `storage.rules` | Konfiguracja Firebase |
+| Ścieżka                                             | Opis                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `src/`                                              | Angular 21 (standalone) — frontend pozostaje w korzeniu repo (nie `frontend/`) |
+| `functions/`                                        | Firebase Cloud Functions + Express API (`/api/*`)                              |
+| `firebase.json`, `firestore.rules`, `storage.rules` | Konfiguracja Firebase                                                          |
 
 ## Stack
 
@@ -26,7 +26,7 @@ Rejestracja zapisuje profil w **Firestore**. Jednorazowo z terminala (wymaga `fi
 npm run setup:firestore
 ```
 
-Skrypt włącza API Firestore i tworzy bazę `(default)` w regionie `eur3`. Alternatywa ręczna: [Firebase Console → Firestore](https://console.firebase.google.com/project/rentme-b5e34/firestore).
+Skrypt włącza API Firestore i tworzy bazę `(default)` w regionie `eur3`. Alternatywa ręczna: [Firebase Console → Firestore](https://console.firebase.google.com/project/rentme2-76ba8/firestore).
 
 ## Wymagania
 
@@ -35,6 +35,8 @@ Skrypt włącza API Firestore i tworzy bazę `(default)` w regionie `eur3`. Alte
 - Projekt Firebase (Auth email/hasło, Firestore, Functions, Hosting)
 
 ## Konfiguracja Firebase
+
+**Aktywny projekt (2026-07-12):** `rentme2-76ba8` (poprzedni: `rentme-b5e34`). `.firebaserc` wskazuje na nowy projekt; lokalne `environment.ts` / `environment.prod.ts` trzeba uzupełnić kluczami z Console.
 
 1. Utwórz projekt w [Firebase Console](https://console.firebase.google.com/).
 2. Włącz **Authentication → Email/Password**.
@@ -82,9 +84,9 @@ http://localhost:4200 — API trafia na wdrożoną funkcję w `europe-west1` (`a
 ```bash
 npm run build
 npm run functions:build
-npx -y firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes,storage --project rentme-b5e34
+npx -y firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes,storage --project rentme2-76ba8
 # po udanym smoke teście bezpośredniego /api/health:
-npx -y firebase-tools@latest deploy --only hosting --project rentme-b5e34
+npx -y firebase-tools@latest deploy --only hosting --project rentme2-76ba8
 ```
 
 Pełny plan, bramki akceptacji, testy i rollback: [`context/deployment/deploy-plan.md`](./context/deployment/deploy-plan.md).
@@ -104,13 +106,13 @@ npm run dev:emulators
 
 ### Rejestracja nie działa?
 
-| Objaw | Przyczyna | Co zrobić |
-|--------|-----------|-----------|
-| `ECONNREFUSED` / brak API | Functions niewdrożone | `npm run setup:appengine`, potem `firebase deploy --only functions` |
-| Logowanie na `127.0.0.1:9099` | `useEmulators: true` | `useEmulators: false`, zrestartuj `npm start` |
-| Deploy: bucket 403 | Brak App Engine | `npm run setup:appengine` |
-| Toast: „Brak połączenia z API” | j.w. | j.w., potem odśwież stronę |
-| Toast: „Firestore niedostępny…” | Firestore wyłączony w projekcie lub brak Javy | Włącz Firestore w Console lub `npm run emulators` z Javą |
+| Objaw                           | Przyczyna                                     | Co zrobić                                                           |
+| ------------------------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| `ECONNREFUSED` / brak API       | Functions niewdrożone                         | `npm run setup:appengine`, potem `firebase deploy --only functions` |
+| Logowanie na `127.0.0.1:9099`   | `useEmulators: true`                          | `useEmulators: false`, zrestartuj `npm start`                       |
+| Deploy: bucket 403              | Brak App Engine                               | `npm run setup:appengine`                                           |
+| Toast: „Brak połączenia z API”  | j.w.                                          | j.w., potem odśwież stronę                                          |
+| Toast: „Firestore niedostępny…” | Firestore wyłączony w projekcie lub brak Javy | Włącz Firestore w Console lub `npm run emulators` z Javą            |
 
 ### Pierwsze kroki w UI
 
@@ -133,24 +135,24 @@ Chronione endpointy wymagają nagłówka `Authorization: Bearer <Firebase ID tok
 npm run build
 npm run functions:build
 npx -y firebase-tools@latest use
-npx -y firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes,storage --project rentme-b5e34
-npx -y firebase-tools@latest deploy --only hosting --project rentme-b5e34
+npx -y firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes,storage --project rentme2-76ba8
+npx -y firebase-tools@latest deploy --only hosting --project rentme2-76ba8
 ```
 
 Hosting serwuje `dist/rentme/browser`; rewrite `/api/**` → funkcja `api` w `europe-west1`. Nie publikuj Hostingu, jeśli wdrożenie lub smoke test Functions nie powiodły się.
 
 ## Skrypty npm
 
-| Skrypt | Opis |
-|--------|------|
-| `npm start` | `ng serve` — frontend; API przez `environment.apiUrl` (domyślnie Cloud Functions) |
-| `npm run dev:api` | Opcjonalnie: emulator Functions (`127.0.0.1:5001`) — wtedy `apiUrl: '/api'` + proxy |
-| `npm run setup:firestore` | Włącza API Firestore i bazę `(default)` (`eur3`) |
-| `npm run setup:appengine` | App Engine (wymagane przed pierwszym deploy Functions) |
-| `npm run setup:auth` | Deploy providera Email/Password (`firebase deploy --only auth`) |
-| `npm run build` | Build produkcyjny Angular |
-| `npm run functions:build` | Kompilacja TypeScript w `functions/` |
-| `npm run emulators` | Pełny zestaw emulatorów (auth, firestore, functions, storage) |
+| Skrypt                    | Opis                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| `npm start`               | `ng serve` — frontend; API przez `environment.apiUrl` (domyślnie Cloud Functions)   |
+| `npm run dev:api`         | Opcjonalnie: emulator Functions (`127.0.0.1:5001`) — wtedy `apiUrl: '/api'` + proxy |
+| `npm run setup:firestore` | Włącza API Firestore i bazę `(default)` (`eur3`)                                    |
+| `npm run setup:appengine` | App Engine (wymagane przed pierwszym deploy Functions)                              |
+| `npm run setup:auth`      | Deploy providera Email/Password (`firebase deploy --only auth`)                     |
+| `npm run build`           | Build produkcyjny Angular                                                           |
+| `npm run functions:build` | Kompilacja TypeScript w `functions/`                                                |
+| `npm run emulators`       | Pełny zestaw emulatorów (auth, firestore, functions, storage)                       |
 
 ## Observability (prod)
 

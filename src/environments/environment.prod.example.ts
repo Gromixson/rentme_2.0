@@ -8,10 +8,10 @@ export const environment = {
   apiUrl: '/api',
   firebase: {
     apiKey: 'YOUR_API_KEY',
-    authDomain: 'YOUR_PROJECT.firebaseapp.com',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT.firebasestorage.app',
-    messagingSenderId: 'YOUR_SENDER_ID',
+    authDomain: 'rentme2-76ba8.firebaseapp.com',
+    projectId: 'rentme2-76ba8',
+    storageBucket: 'rentme2-76ba8.firebasestorage.app',
+    messagingSenderId: '96938767356',
     appId: 'YOUR_APP_ID',
   } satisfies FirebaseOptions,
 };
