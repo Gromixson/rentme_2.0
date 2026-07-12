@@ -66,15 +66,15 @@ Obszary o najwyższej złożoności biznesowej i regresji — priorytet testów 
 
 ### Frontend (Angular)
 
-| Aspekt                    | Stan                                                                                                                |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Runner                    | Karma 6 + Jasmine 5, ChromeHeadless (`npm test`)                                                                    |
-| Konfiguracja              | `karma.conf.js`, `angular.json` → architect.test                                                                    |
-| Pliki spec                | **2** — `src/app/core/auth/role.guard.spec.ts` (5 przypadków), `src/app/core/auth/auth-ready.spec.ts` (3 przypadki) |
-| Łącznie                   | **8 examples**, wszystkie **SUCCESS** (lokalnie 2026-07-12)                                                         |
-| Coverage                  | Skonfigurowany reporter (`karma-coverage`), **brak progu w CI**; faktyczne pokrycie ~ auth guards only              |
-| Feature / component tests | **Brak** — zero speców w `features/`, `shared/`, `core/api/`                                                        |
-| E2E                       | **Brak** Playwright/Cypress                                                                                         |
+| Aspekt                    | Stan                                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Runner                    | Karma 6 + Jasmine 5, ChromeHeadless (`npm test`)                                                                     |
+| Konfiguracja              | `karma.conf.js`, `angular.json` → architect.test                                                                     |
+| Pliki spec                | **2** — `src/app/core/auth/role.guard.spec.ts` (5 przypadków), `src/app/core/auth/auth-ready.spec.ts` (3 przypadki)  |
+| Łącznie                   | **8 examples**, wszystkie **SUCCESS** (lokalnie 2026-07-12)                                                          |
+| Coverage                  | Skonfigurowany reporter (`karma-coverage`), **brak progu w CI**; faktyczne pokrycie ~ auth guards only               |
+| Feature / component tests | **Brak** — zero speców w `features/`, `shared/`, `core/api/`                                                         |
+| E2E                       | **Playwright** — `e2e/seed.spec.ts` (guest); auth flow w `e2e/role-guard`, `e2e/accept-booking` (wymaga `E2E_*` env) |
 
 ### Backend (Cloud Functions)
 
@@ -133,10 +133,11 @@ Każda faza wiąże ryzyka z **change-id** i cyklem kursowym: `/10x-new <change-
 - CI job: `functions:build` + przyszły `functions:test`.
 - Manual checklist happy path MVP.md §7 przed każdym demo.
 
-### Phase 3 — E2E (moduł 3, później)
+### Phase 3 — E2E (M3L4 — w toku)
 
-- Playwright: dwie sesje (seeker + provider), happy path + TIMEOUT.
-- **Poza budżetem Phase 1** — patrz §7 Budget exclusions.
+- Playwright: `e2e/seed.spec.ts`, `role-guard` (R-07), `accept-booking` (R-01/R-03).
+- Auth storageState: `e2e/auth.setup.ts` + env `E2E_SEEKER_*` / `E2E_PROVIDER_*` — patrz `e2e/README.md`.
+- CI: opcjonalny `.github/workflows/e2e.yml` (workflow_dispatch); główny pipeline bez E2E.
 
 ---
 
@@ -199,15 +200,15 @@ Mapowanie pięciu flow wymaganych w lekcji na ryzyka i typ testu (Phase 1).
 
 > **Phase 1:** TBD — wypełnić w M3L2 przy pierwszej implementacji testów. Poniżej kandydaci zgodni ze stackiem.
 
-| Pattern                                  | Kiedy                                                                                         | Status                              |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------- |
-| **Guard test harness**                   | `roleGuard`, `waitForAuthReady` — mock `AuthService` + `TestBed.runInInjectionContext`        | ✅ Istnieje — wzorzec do kopiowania |
-| **HttpClientTestingModule + ApiService** | Komponenty seeker/provider wywołujące API                                                     | TBD Phase 1                         |
-| **Signal mock auth state**               | Testy redirectów przy zmianie `profile.activeRole`                                            | TBD Phase 1                         |
-| **Functions pure fn tests**              | `isPendingPastExpiry`, `expirePendingRequest` z mock `runTransaction` — Vitest w `functions/` | ✅ M3L2 — `requests.test.ts`        |
-| **Supertest + mock admin**               | Trasy Express z `requireAuth`                                                                 | TBD Phase 2                         |
-| **Firestore emulator integration**       | Pełna transakcja accept → booking                                                             | TBD Phase 2                         |
-| **Playwright dual-context**              | Happy path MVP §7 dwoma kontami                                                               | TBD Phase 3 (moduł 3)               |
+| Pattern                                  | Kiedy                                                                                         | Status                                 |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Guard test harness**                   | `roleGuard`, `waitForAuthReady` — mock `AuthService` + `TestBed.runInInjectionContext`        | ✅ Istnieje — wzorzec do kopiowania    |
+| **HttpClientTestingModule + ApiService** | Komponenty seeker/provider wywołujące API                                                     | TBD Phase 1                            |
+| **Signal mock auth state**               | Testy redirectów przy zmianie `profile.activeRole`                                            | TBD Phase 1                            |
+| **Functions pure fn tests**              | `isPendingPastExpiry`, `expirePendingRequest` z mock `runTransaction` — Vitest w `functions/` | ✅ M3L2 — `requests.test.ts`           |
+| **Supertest + mock admin**               | Trasy Express z `requireAuth`                                                                 | TBD Phase 2                            |
+| **Firestore emulator integration**       | Pełna transakcja accept → booking                                                             | TBD Phase 2                            |
+| **Playwright dual-context**              | Happy path MVP §7 dwoma kontami                                                               | ✅ M3L4 — `e2e/accept-booking.spec.ts` |
 
 ---
 
@@ -216,22 +217,24 @@ Mapowanie pięciu flow wymaganych w lekcji na ryzyka i typ testu (Phase 1).
 Propozycja bramek dla PR i lokalnej pracy — stan **as-is** vs **target Phase 1**.  
 **M3L3 (2026-07-12):** Cursor hooks + opcjonalny lefthook pre-commit — patrz `.cursor/hooks.json`, `scripts/hooks/`, `lefthook.yml`.
 
-| Gate                       | Komenda / artefakt                        | As-is (2026-07-12) | Per-edit (Cursor)                                 | Pre-commit (lefthook)       | CI                  |
-| -------------------------- | ----------------------------------------- | ------------------ | ------------------------------------------------- | --------------------------- | ------------------- |
-| **Install**                | `npm ci`                                  | ✅                 | —                                                 | —                           | ✅                  |
-| **Format**                 | Prettier                                  | ❌                 | ✅ `prettier-after-edit.mjs` (--write)            | ✅ `--check` staged         | ❌                  |
-| **Typecheck app**          | `tsc -p tsconfig.app.json --noEmit`       | ❌                 | ✅ po edycji `src/**/*.ts` (≠ spec)               | ✅ staged `src/**` (≠ spec) | via `build`         |
-| **Typecheck spec**         | `tsc -p tsconfig.spec.json --noEmit`      | ❌                 | ✅ po edycji `*.spec.ts`                          | ✅ staged spec              | ❌                  |
-| **Typecheck functions**    | `tsc -p functions/tsconfig.json --noEmit` | ❌                 | ✅ po edycji `functions/**`                       | ✅ staged functions         | ❌                  |
-| **Unit frontend (scoped)** | `ng test --include=…`                     | ❌                 | ✅ tylko `src/app/core/auth/**` (~8s)             | ❌ (za wolne)               | ❌                  |
-| **Unit frontend (full)**   | `npm test` (8 specs)                      | ✅                 | ❌                                                | ❌                          | ✅                  |
-| **Build frontend**         | `npm run build`                           | ✅                 | ❌                                                | ❌                          | ✅                  |
-| **Build functions**        | `npm run functions:build`                 | ✅                 | ❌                                                | ❌                          | ✅                  |
-| **Functions tests**        | `npm run functions:test`                  | ✅ 9 specs (M3L2)  | ✅ tylko `functions/src/**` (≠ `.test.ts`, ~1–2s) | ❌                          | ✅                  |
-| **Lint frontend**          | brak ESLint root                          | ❌                 | ❌                                                | ❌                          | opcjonalnie później |
-| **Lint functions**         | `npm run lint --prefix functions`         | ❌                 | ❌                                                | ❌                          | WARN lokalnie       |
-| **Manual MVP §7**          | Checklist demo 7 kroków                   | manual             | —                                                 | —                           | przed merge S-06+   |
-| **Secrets**                | brak `environment.ts` w git               | ✅                 | —                                                 | —                           | ✅                  |
+| Gate                       | Komenda / artefakt                        | As-is (2026-07-12) | Per-edit (Cursor)                                 | Pre-commit (lefthook)       | CI                    |
+| -------------------------- | ----------------------------------------- | ------------------ | ------------------------------------------------- | --------------------------- | --------------------- |
+| **Install**                | `npm ci`                                  | ✅                 | —                                                 | —                           | ✅                    |
+| **Format**                 | Prettier                                  | ❌                 | ✅ `prettier-after-edit.mjs` (--write)            | ✅ `--check` staged         | ❌                    |
+| **Typecheck app**          | `tsc -p tsconfig.app.json --noEmit`       | ❌                 | ✅ po edycji `src/**/*.ts` (≠ spec)               | ✅ staged `src/**` (≠ spec) | via `build`           |
+| **Typecheck spec**         | `tsc -p tsconfig.spec.json --noEmit`      | ❌                 | ✅ po edycji `*.spec.ts`                          | ✅ staged spec              | ❌                    |
+| **Typecheck functions**    | `tsc -p functions/tsconfig.json --noEmit` | ❌                 | ✅ po edycji `functions/**`                       | ✅ staged functions         | ❌                    |
+| **Unit frontend (scoped)** | `ng test --include=…`                     | ❌                 | ✅ tylko `src/app/core/auth/**` (~8s)             | ❌ (za wolne)               | ❌                    |
+| **Unit frontend (full)**   | `npm test` (8 specs)                      | ✅                 | ❌                                                | ❌                          | ✅                    |
+| **Build frontend**         | `npm run build`                           | ✅                 | ❌                                                | ❌                          | ✅                    |
+| **Build functions**        | `npm run functions:build`                 | ✅                 | ❌                                                | ❌                          | ✅                    |
+| **Functions tests**        | `npm run functions:test`                  | ✅ 9 specs (M3L2)  | ✅ tylko `functions/src/**` (≠ `.test.ts`, ~1–2s) | ❌                          | ✅                    |
+| **Lint frontend**          | brak ESLint root                          | ❌                 | ❌                                                | ❌                          | opcjonalnie później   |
+| **Lint functions**         | `npm run lint --prefix functions`         | ❌                 | ❌                                                | ❌                          | WARN lokalnie         |
+| **Manual MVP §7**          | Checklist demo 7 kroków                   | manual             | —                                                 | —                           | przed merge S-06+     |
+| **E2E Playwright (guest)** | `npm run e2e` (seed.spec.ts)              | ❌                 | ❌                                                | ❌ (wolne)                  | opcjonalnie `e2e.yml` |
+| **E2E Playwright (auth)**  | `npm run e2e` + `E2E_*` env               | ❌                 | ❌                                                | ❌                          | workflow_dispatch     |
+| **Secrets**                | brak `environment.ts` w git               | ✅                 | —                                                 | —                           | ✅                    |
 
 ### Warstwy — wybór M3L3
 

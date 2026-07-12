@@ -35,15 +35,17 @@ src/app/
 
 ## Build, test, and development
 
-| Command                  | Purpose                                                                                             |
-| ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `npm start`              | Dev server (`ng serve`); API via `environment.apiUrl` (cloud Functions URL by default)              |
-| `npm run dev:api`        | Optional: local Functions emulator only                                                             |
-| `npm run build`          | Production build to `dist/rentme`                                                                   |
-| `npm test`               | Unit tests (Karma + Jasmine, headless Chrome)                                                       |
-| `npm run functions:test` | Functions unit tests (Vitest) — pure expiry/transaction logic in `functions/src/services/*.test.ts` |
-| `npm run hooks:verify`   | Smoke-test Cursor hook scripts (Prettier, tsc, auth test skip)                                      |
-| `npm run hooks:install`  | Install lefthook pre-commit (Prettier check + tsc on staged files)                                  |
+| Command                  | Purpose                                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `npm start`              | Dev server (`ng serve`); API via `environment.apiUrl` (cloud Functions URL by default)                      |
+| `npm run dev:api`        | Optional: local Functions emulator only                                                                     |
+| `npm run build`          | Production build to `dist/rentme`                                                                           |
+| `npm test`               | Unit tests (Karma + Jasmine, headless Chrome)                                                               |
+| `npm run functions:test` | Functions unit tests (Vitest) — pure expiry/transaction logic in `functions/src/services/*.test.ts`         |
+| `npm run e2e`            | Playwright E2E — guest seed always; auth flows need `E2E_SEEKER_*` / `E2E_PROVIDER_*` (see `e2e/README.md`) |
+| `npm run e2e:ui`         | Playwright UI mode                                                                                          |
+| `npm run hooks:verify`   | Smoke-test Cursor hook scripts (Prettier, tsc, auth test skip)                                              |
+| `npm run hooks:install`  | Install lefthook pre-commit (Prettier check + tsc on staged files)                                          |
 
 Cursor **afterFileEdit** hooks: `@.cursor/hooks.json` → `@scripts/hooks/` (format, typecheck, scoped auth tests). Details: `@context/foundation/test-plan.md` §7, `@.cursor/rules/m3l3-quality-gates.mdc`.
 

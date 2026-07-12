@@ -41,6 +41,11 @@ testem.log
 /typings
 __screenshots__/
 
+# Playwright E2E auth sessions (never commit)
+/playwright/.auth/
+/playwright-report/
+/test-results/
+
 # System files
 .DS_Store
 Thumbs.db

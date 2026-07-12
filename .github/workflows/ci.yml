@@ -22,3 +22,4 @@ jobs:
       - run: npm test
       - run: npm run functions:build
       - run: npm run functions:test
+      # E2E Playwright: optional — see .github/workflows/e2e.yml and e2e/README.md
