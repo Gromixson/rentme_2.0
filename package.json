@@ -26,7 +26,8 @@
     "e2e:report": "playwright show-report",
     "emulators": "firebase emulators:start --import=./.firebase-emulator-data --export-on-exit",
     "emulators:exec": "firebase emulators:exec",
-    "review:diff": "npm run review --prefix agents/code-review"
+    "review:diff": "node scripts/review-diff.mjs",
+    "review:build": "npm run build --prefix agents/code-review"
   },
   "private": true,
   "packageManager": "npm@10.9.4",
