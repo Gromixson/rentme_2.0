@@ -7,6 +7,12 @@
 
 ## Blockers (wymagają działania użytkownika)
 
+### Firebase — nowy projekt (migracja)
+
+- **Status (2026-07-12):** repo skonfigurowane pod **`rentme2-76ba8`** (`.firebaserc`, przykłady env, lokalne `environment.ts` / `environment.prod.ts`, app web **RentMe Web**).
+- **Pozostało ręcznie:** włączyć **Blaze** (Functions wymagają płatnego planu), **Authentication → Email/Password**, utworzyć **Firestore** (`npm run setup:firestore`), wdrożyć rules/functions/hosting (`README.md` § deploy). Stary projekt `rentme-b5e34` można zostawić jako archiwum lub usunąć po migracji danych.
+- **Blokada deploy:** MCP raportuje **Billing Enabled: No** — bez Blaze deploy Functions się nie uda.
+
 ### 10x CLI auth
 
 - **Problem:** `npx @przeprogramowani/10x-cli auth` kończy się `auth_timeout` — magic link na **miroslaw.moskalik@gmail.com** nie dotarł (sprawdź spam / filtry).
@@ -29,7 +35,7 @@
 ### Konta E2E (Playwright)
 
 - **Problem:** brak ustawionych zmiennych środowiskowych dla auth setup.
-- **Wymagane:** `E2E_SEEKER_EMAIL` / `E2E_SEEKER_PASSWORD` oraz `E2E_PROVIDER_EMAIL` / `E2E_PROVIDER_PASSWORD` (dwa osobne konta Firebase Auth w `rentme-b5e34`; provider z kategorią + stawką > 0).
+- **Wymagane:** `E2E_SEEKER_EMAIL` / `E2E_SEEKER_PASSWORD` oraz `E2E_PROVIDER_EMAIL` / `E2E_PROVIDER_PASSWORD` (dwa osobne konta Firebase Auth w **`rentme2-76ba8`**; provider z kategorią + stawką > 0).
 - **Skutek:** `role-guard.spec.ts` i `accept-booking.spec.ts` są **SKIP**; działa tylko `seed.spec.ts` (gość).
 - **Instrukcja:** `e2e/README.md`
 
@@ -50,7 +56,7 @@
 | `context/README.md` + link w foundation  | ✅                                   |
 | `madge@8.0.0` devDep                     | ✅                                   |
 
-**Architect path — pozostałe:** M4L3 research · M4L4 plan · M4L5 domain.
+**Architect path — pozostałe:** M4L5 domain.
 
 ### M3L4 — E2E (Playwright)
 
@@ -72,14 +78,39 @@
 
 - **Status:** **✅ ukończone** (2026-07-12)
 - **Wykonane:** refaktor `AGENTS.md` jako TOC (~76→68 linii); `context/README.md`; audyt w `context/foundation/agents-md-review.md`; ladder **step 1** (bez per-module AGENTS/context).
-- **Architect path pending:** L2–L5 — per-area rules, nested context, split AGENTS — dopiero przy sygnałach skali (multi-team, >200 linii reguł, powtarzalne błędy per moduł).
+- **Architect path L1 follow-up:** per-area rules, nested context, split AGENTS — dopiero przy sygnałach skali (multi-team, >200 linii reguł, powtarzalne błędy per moduł).
 
 ### M4L3 — Deep focus (feature overview + technical debt)
 
 - **Status:** **✅ ukończone** (2026-07-12)
 - **Change-id:** `provider-accept-booking-flow` (S-06 north star)
 - **Wykonane:** `context/map/repo-map.md` (minimalna mapa M4L2); `context/changes/provider-accept-booking-flow/change.md` + `research.md` (E2E trace, dług techniczny, structural claims + weryfikacja rg); ast-grep niedostępny na Win — fallback rg udokumentowany.
-- **Architect path pending:** **L4 plan** (per-area planowanie zmian), **L5 domain** (nested domain context) — po sygnałach skali lub przed większym refaktorem respond/timeout.
+- **Architect path pending:** **L5 domain** (nested domain context) — po implementacji planu `refactor-opportunities` lub przy sygnałach skali.
+
+### M4L4 — Refaktoryzacja z agentem (plan)
+
+- **Status:** **✅ ukończone** (2026-07-12)
+- **Change-id:** `refactor-opportunities` (osobny od `provider-accept-booking-flow`)
+- **Wykonane:** `change.md` + `research.md` (klasyfikacja P1–P10, ranking, 3 perspektywy) + weryfikacja rg (ast-grep niedostępny Win) + `plan.md` / `plan-brief.md` + `plan-review.md`
+- **Decyzja:** guard-first — Vitest respond przed refaktorem; wspólny guard expiry; Strangler extract serwisu; Domain Model odrzucony na MVP
+- **Architect path pending:** **M4L5 domain** — nested domain context dla Request/Booking
+
+### M4L4 — Plan refaktoryzacji
+
+- **Status:** **✅ ukończone** (2026-07-12, zsyntetyzowane z M4L3 przy L5)
+- **Change-id:** `refactor-opportunities`
+- **Wykonane:** `context/changes/refactor-opportunities/plan.md` — Opcja A guard-first + Vitest respond; fazy 0–3; sekcja „czego NIE robimy”.
+
+### M4L5 — Domain distillation + architect report
+
+- **Status:** **✅ ukończone** (2026-07-12)
+- **Wykonane:**
+  - `context/domain/01-domain-distillation.md` — UL, subdomeny, agregaty, luki
+  - `context/domain/02-invariant-aggregate-refactor.md` — niezmiennik #1 ServiceRequest
+  - `context/domain/03-anti-corruption-layer.md` — ACL Firebase Timestamp/DTO
+  - `context/architect-report.md` — zamknięcie Modułu 4
+  - `context/domain/README.md` + linki w `context/README.md`
+- **Moduł 4 Architect path:** **KOMPLETNY** (L1 context TOC · L2 repo-map · L3 S-06 research · L4 plan · L5 domain + report)
 
 ### M3L5 — debugging lesson (swallowed errors)
 
@@ -125,6 +156,9 @@
 | M4L1 context TOC     | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
 | M4L2 repo-map        | `context/map/repo-map.md` + artefakty 1–3                                    |
 | M4L3 deep focus S-06 | `provider-accept-booking-flow/` — change.md + research.md (E2E trace, dług)  |
+| M4L4 refactor plan   | `refactor-opportunities/plan.md` — guard-first, fazy 0–3                     |
+| M4L5 domain + report | `context/domain/*`, `architect-report.md` — DDD + zamknięcie M4              |
+| M4L4 refactor plan   | `refactor-opportunities/` — research + plan guard-first (bez kodu)           |
 
 ---
 

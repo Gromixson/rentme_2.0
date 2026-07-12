@@ -144,4 +144,4 @@ flowchart TB
 - [x] `pending-backlog.md` zaktualizowany
 - [ ] Commit: `docs: M4L2 add context/map repo-map and artifacts`
 
-**Architect path — pozostałe artefakty:** M4L3 research · M4L4 plan · M4L5 domain
+**Architect path — pozostałe artefakty:** M4L5 domain
