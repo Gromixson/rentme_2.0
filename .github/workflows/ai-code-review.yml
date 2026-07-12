@@ -1,0 +1,97 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  ai-code-review:
+    # Run on every PR to master, or when label ai-cr:review is added (on-demand retry)
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'ai-cr:review')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute diff against base
+        id: diff
+        shell: bash
+        run: |
+          BASE="${{ github.base_ref || 'master' }}"
+          git fetch origin "$BASE" 2>/dev/null || true
+          if git rev-parse "origin/${BASE}" >/dev/null 2>&1; then
+            DIFF=$(git diff "origin/${BASE}...HEAD")
+          else
+            DIFF=$(git diff "${BASE}...HEAD" 2>/dev/null || git diff HEAD~1 HEAD)
+          fi
+          echo "bytes=${#DIFF}" >> "$GITHUB_OUTPUT"
+          {
+            echo 'content<<DIFF_EOF'
+            echo "$DIFF"
+            echo 'DIFF_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run composite code review
+        id: review
+        uses: ./.github/actions/code-review
+        with:
+          api-key: ${{ secrets.OPENROUTER_API_KEY || secrets.LLM_PROVIDER_API_KEY }}
+          pr-title: ${{ github.event.pull_request.title || 'Manual review' }}
+          pr-body: ${{ github.event.pull_request.body || '' }}
+          diff: ${{ steps.diff.outputs.content }}
+          base-ref: ${{ github.base_ref || 'master' }}
+
+      - name: Post PR comment with summary
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          RESULT_FILE="agents/code-review/.tmp/review-result.json"
+          if [ -f "$RESULT_FILE" ]; then
+            node <<'NODE'
+          const fs = require('fs');
+          const r = JSON.parse(fs.readFileSync('agents/code-review/.tmp/review-result.json', 'utf8'));
+          const body = [
+            '## 🤖 AI Code Review',
+            '',
+            '**Werdykt:** `' + r.verdict + '`',
+            '',
+            r.summaryMarkdown,
+            '',
+            '---',
+            '_Automatyczny review (M5L3). Retry: dodaj label `ai-cr:review`._',
+          ].join('\n');
+          fs.writeFileSync('/tmp/ai-cr-comment.md', body);
+          NODE
+          else
+            echo "## 🤖 AI Code Review\n\n**Werdykt:** \`${{ steps.review.outputs.verdict }}\`\n\nBrak pliku wyniku JSON." > /tmp/ai-cr-comment.md
+          fi
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/ai-cr-comment.md
+
+      - name: Set PR labels
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          VERDICT="${{ steps.review.outputs.verdict }}"
+          PR="${{ github.event.pull_request.number }}"
+          gh pr edit "$PR" --remove-label "ai-cr:passed" 2>/dev/null || true
+          gh pr edit "$PR" --remove-label "ai-cr:failed" 2>/dev/null || true
+          if [ "$VERDICT" = "pass" ]; then
+            gh pr edit "$PR" --add-label "ai-cr:passed"
+          else
+            gh pr edit "$PR" --add-label "ai-cr:failed"
+          fi

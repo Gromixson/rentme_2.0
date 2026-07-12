@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: RentMe code review agent — M5L3 evals (OpenRouter)
+
+prompts:
+  - file://prompts/review.txt
+
+providers:
+  - id: openrouter:anthropic/claude-3-haiku-20240307
+    config:
+      apiBaseUrl: https://openrouter.ai/api/v1
+      apiKeyEnvar: OPENROUTER_API_KEY
+  - id: openrouter:anthropic/claude-3.5-sonnet
+    config:
+      apiBaseUrl: https://openrouter.ai/api/v1
+      apiKeyEnvar: OPENROUTER_API_KEY
+  - id: openrouter:google/gemini-2.0-flash-001
+    config:
+      apiBaseUrl: https://openrouter.ai/api/v1
+      apiKeyEnvar: OPENROUTER_API_KEY
+
+defaultTest:
+  vars:
+    diff: file://fixtures/sample-flawed.diff
+  assert:
+    - type: is-json
+    - type: javascript
+      value: |
+        const o = JSON.parse(output);
+        if (!o.scores || !o.verdict) throw new Error('Missing scores or verdict');
+        if (o.verdict !== 'fail') throw new Error('Expected fail for flawed RentMe diff');
+        const s = o.scores;
+        if (s.securitySafety > 5) throw new Error('securitySafety should be low');
+        if (s.idiomaticity > 5) throw new Error('idiomaticity should be low');
+        return true;
+
+tests:
+  - description: flawed diff — must fail
+    vars:
+      diff: file://fixtures/sample-flawed.diff

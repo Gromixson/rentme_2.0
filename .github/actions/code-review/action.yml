@@ -1,0 +1,49 @@
+name: 'AI Code Review'
+description: 'RentMe PR review agent — 6 criteria, OpenRouter LLM, JSON verdict'
+inputs:
+  api-key:
+    description: 'OpenRouter API key (OPENROUTER_API_KEY or LLM_PROVIDER_API_KEY)'
+    required: true
+  pr-title:
+    description: 'Pull request title'
+    required: true
+  pr-body:
+    description: 'Pull request body (optional — omit in CI to save tokens)'
+    required: false
+    default: ''
+  diff:
+    description: 'Git diff to review'
+    required: true
+  base-ref:
+    description: 'Base branch ref (informational; diff computed in workflow)'
+    required: false
+    default: 'master'
+outputs:
+  verdict:
+    description: 'pass or fail'
+    value: ${{ steps.review.outputs.verdict }}
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install review agent dependencies
+      shell: bash
+      run: npm ci --prefix agents/code-review
+
+    - name: Build review agent
+      shell: bash
+      run: npm run build --prefix agents/code-review
+
+    - name: Run AI code review
+      id: review
+      shell: bash
+      env:
+        INPUT_API_KEY: ${{ inputs.api-key }}
+        INPUT_DIFF: ${{ inputs.diff }}
+        INPUT_PR_TITLE: ${{ inputs.pr-title }}
+        INPUT_PR_BODY: ${{ inputs.pr-body }}
+      run: node "${{ github.action_path }}/run.mjs"

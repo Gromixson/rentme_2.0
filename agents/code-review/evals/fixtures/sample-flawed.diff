@@ -1,0 +1,47 @@
+diff --git a/src/app/features/seeker/booking-list.component.ts b/src/app/features/seeker/booking-list.component.ts
+new file mode 100644
+index 0000000..abc1234
+--- /dev/null
++++ b/src/app/features/seeker/booking-list.component.ts
+@@ -0,0 +1,28 @@
++import { Component, inject, OnInit } from '@angular/core';
++import { collection, getDocs } from 'firebase/firestore';
++import { FIREBASE_FIRESTORE } from '../../core/firebase/firebase.tokens';
++
++@Component({
++  selector: 'app-booking-list',
++  standalone: true,
++  template: `<ul>@for (b of bookings; track b.id) { <li>{{ b.id }}</li> }</ul>`,
++})
++export class BookingListComponent implements OnInit {
++  private firestore = inject(FIREBASE_FIRESTORE);
++  bookings: { id: string }[] = [];
++
++  async ngOnInit() {
++    const snap = await getDocs(collection(this.firestore, 'bookings'));
++    this.bookings = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
++  }
++}
+diff --git a/functions/src/routes/admin.ts b/functions/src/routes/admin.ts
+new file mode 100644
+index 0000000..def5678
+--- /dev/null
++++ b/functions/src/routes/admin.ts
+@@ -0,0 +1,18 @@
++import { Router } from 'express';
++import { db } from '../db';
++
++const router = Router();
++
++router.get('/users/export', async (_req, res) => {
++  const snap = await db().collection('users').get();
++  res.json(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
++});
++
++router.post('/auth/login', async (req, res) => {
++  const { email, password } = req.body;
++  console.log('login attempt', email, password);
++  res.json({ token: 'fake-jwt', email });
++});
++
++export default router;

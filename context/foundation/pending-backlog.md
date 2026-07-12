@@ -110,14 +110,14 @@
 
 **Status:** **âś… ukoĹ„czone** (2026-07-12)
 
-| Element                           | Stan                                    |
-| --------------------------------- | --------------------------------------- |
-| `agents/code-review/`             | âś… standalone ESM + TypeScript         |
-| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary |
-| OpenRouter + metryki `totalUsage` | âś… stderr                              |
-| `AGENTS.md` inject                | âś… relative path z repo root           |
-| Root script `review:diff`         | âś…                                     |
-| CI integracja                     | âŹł M5L3 (poza scope L2)                |
+| Element                           | Stan                                  |
+| --------------------------------- | ------------------------------------- |
+| `agents/code-review/`             | âś… standalone ESM + TypeScript       |
+| `ToolLoopAgent` + `Output.object` | ✅ 6 scores, verdict, summaryMarkdown |
+| OpenRouter + metryki `totalUsage` | ✅ stderr                             |
+| `AGENTS.md` inject                | ✅ relative path z repo root          |
+| Root script `review:diff`         | ✅                                    |
+| CI integracja                     | ✅ M5L3 — patrz sekcja poniżej        |
 
 ### M5L3 — CI/CD code review (GHA + promptfoo)
 

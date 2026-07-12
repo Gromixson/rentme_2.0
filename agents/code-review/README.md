@@ -1,75 +1,102 @@
-# Agent code review (M5L2)
+# Agent code review (M5L2 + M5L3)
 
-Lokalny, skryptowy agent recenzji kodu dla RentMe 2.0. Czyta **git diff ze stdin**, zwraca **strukturyzowany JSON** (5 ocen 1–10, verdict pass/fail, podsumowanie Markdown).
+Lokalny agent recenzji kodu dla RentMe 2.0 — **Vercel AI SDK 6** (`ToolLoopAgent`, `Output.object`) + OpenRouter.  
+Ocenia git diff według **6 kryteriów** (1–10), werdykt pass/fail, `summaryMarkdown` po polsku.
 
-## Dlaczego Vercel AI SDK 6 (compose)
+## 6 kryteriów
 
-Lekcja M5L2 rekomenduje kategorię **compose** — jeden interfejs (`ToolLoopAgent`, `Output.object`) z wymienialnym providerem modelu. OpenRouter daje dostęp do wielu modeli bez zmiany kodu agenta. W v1 agent nie używa narzędzi (`tools: {}`) — przewidywalny, tani review diffa.
+| Klucz                       | Opis                                                           |
+| --------------------------- | -------------------------------------------------------------- |
+| `implementationCorrectness` | Poprawność logiki, API, Firestore                              |
+| `idiomaticity`              | Wzorce Angular 21 + Functions (ApiService, nie Firestore w UI) |
+| `complexity`                | Czytelność, minimalny scope                                    |
+| `testRiskCoverage`          | Testy Vitest/Karma/Playwright przy ryzyku                      |
+| `documentation`             | plan.md, verification, komentarze                              |
+| `securitySafety`            | Auth, sekrety, rules, walidacja                                |
+
+**Werdykt:** `pass` — wszystkie ≥7, żadne ≤4; inaczej `fail`.  
+**Parked (nie oceniane):** businessAlignment, architecturalFit.
 
 ## Wymagania
 
 - Node.js 20+
-- Klucz API [OpenRouter](https://openrouter.ai/keys)
+- `OPENROUTER_API_KEY` lub `LLM_PROVIDER_API_KEY`
+
+Bez klucza — czytelny komunikat błędu (exit 2).
 
 ## Instalacja
 
 ```bash
 cd agents/code-review
 npm install
-cp .env.example .env   # uzupełnij OPENROUTER_API_KEY lokalnie — nie commituj .env
+cp .env.example .env   # lokalnie — nie commituj
+npm run build          # dist/review.js dla CI
 ```
 
-## Zmienne środowiskowe
-
-| Zmienna              | Wymagana | Opis                                                                                                  |
-| -------------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| `OPENROUTER_API_KEY` | tak      | Klucz OpenRouter                                                                                      |
-| `REVIEW_MODEL`       | nie      | Domyślnie `anthropic/claude-sonnet-4`. Fallbacki: `anthropic/claude-3.5-sonnet`, `openai/gpt-4o-mini` |
-
-Metryki tokenów (`totalUsage`, kroki) trafiają na **stderr**; JSON review na **stdout**.
-
-## Użycie
-
-Z katalogu pakietu:
+## Użycie lokalne
 
 ```bash
-git diff HEAD~1 | npm run review
+# z root repo (po build)
+npm run review:diff -- --title "feat: moja zmiana"
+npm run review:diff -- --with-tools   # + context/changes/*/plan.md (readPlan)
+
+# dev (tsx, bez build)
+git diff master...HEAD | npm run review --prefix agents/code-review -- --title "feat: foo" --json
 ```
 
-Z katalogu głównego repozytorium:
+Metryki tokenów na **stderr**; `--json` → stdout.
+
+## CI — GitHub Actions
+
+1. `git remote add origin <url>` + `git push -u origin master`
+2. Secret **Settings → Actions:** `OPENROUTER_API_KEY`
+3. Labele (jednorazowo):
+   ```bash
+   gh label create "ai-cr:passed" --color "0E8A16"
+   gh label create "ai-cr:failed" --color "B60205"
+   gh label create "ai-cr:review" --color "1D76DB"
+   ```
+4. PR do `master` → `.github/workflows/ai-code-review.yml`
+
+**GITHUB_TOKEN permissions:** `pull-requests: write`, `issues: write` (komentarz + labele).
+
+**Retry:** dodaj label `ai-cr:review` na PR.
+
+**Pinning:** `checkout@v4`, `setup-node@v4`; produkcyjnie rozważ SHA pinning ([docs](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions)).
+
+## promptfoo evals
 
 ```bash
-git diff HEAD~1 | npm run review:diff
+cd agents/code-review/evals
+export OPENROUTER_API_KEY=sk-or-...
+npx promptfoo@latest eval
+# bez klucza / starszy Node:
+npx promptfoo@latest eval --dry-run
 ```
 
-Inne przykłady:
+Szczegóły: [`evals/README.md`](evals/README.md).
 
-```bash
-git diff --staged | npm run review --prefix agents/code-review
-git show 4a5b7e6 | npm run review --prefix agents/code-review
-```
-
-## Format wyjścia
+## Format wyjścia (--json)
 
 ```json
 {
   "scores": {
-    "correctness": 8,
-    "security": 9,
-    "maintainability": 7,
-    "conventions": 8,
-    "testCoverage": 6
+    "implementationCorrectness": 8,
+    "idiomaticity": 7,
+    "complexity": 8,
+    "testRiskCoverage": 6,
+    "documentation": 7,
+    "securitySafety": 9
   },
   "verdict": "pass",
-  "summary": "## Podsumowanie\n\n..."
+  "summaryMarkdown": "## Podsumowanie\n\n..."
 }
 ```
 
-Przykładowy wynik z uruchomienia na żywo (gdy dostępny): [`sample-output.json`](sample-output.json).
-
 ## AGENTS.md
 
-Compose SDK **nie ładuje** automatycznie reguł repozytorium. Agent wstrzykuje treść `../../AGENTS.md` (względem tego pakietu) do `instructions`.
+Agent wstrzykuje `../../AGENTS.md` do instructions. CI używa **scorer-only** (`tools: {}`).  
+Opcjonalnie `review-with-tools.js` / `--with-tools` wczytuje plany z `context/changes/*/plan.md`.
 
 ## Typecheck (bez API)
 
@@ -77,11 +104,7 @@ Compose SDK **nie ładuje** automatycznie reguł repozytorium. Agent wstrzykuje 
 npm run typecheck --prefix agents/code-review
 ```
 
-## Scope M5L2 vs M5L3
-
-- **M5L2 (ten pakiet):** lokalny skrypt, metryki tokenów, structured output.
-- **M5L3 (później):** integracja z CI / lefthook — poza zakresem tej lekcji.
-
 ## Powiązania
 
-- Mapa możliwości M5L1: [`context/champion/opportunity-map.md`](../../context/champion/opportunity-map.md) — sygnał 2 (brak PR review) → ten agent jako cienki helper przed merge.
+- Change M5L3: `context/changes/ci-cd-code-review/`
+- Mapa możliwości: `context/champion/opportunity-map.md` (sygnał 2 — brak remote)

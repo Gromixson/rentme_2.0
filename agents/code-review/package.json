@@ -1,10 +1,12 @@
 {
   "name": "@rentme/code-review",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node esbuild.config.mjs",
     "review": "tsx src/review.ts",
+    "review:tools": "tsx src/review-with-tools.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
+    "esbuild": "^0.25.12",
     "tsx": "^4.19.4",
     "typescript": "~5.9.2"
   }
