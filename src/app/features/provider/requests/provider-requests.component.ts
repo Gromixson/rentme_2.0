@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { Tag } from 'primeng/tag';
@@ -48,6 +48,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 export class ProviderRequestsComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly requests = signal<ServiceRequest[]>([]);
 
@@ -65,8 +66,13 @@ export class ProviderRequestsComponent implements OnInit {
   respond(id: string, action: 'accept' | 'decline'): void {
     this.api.respondToRequest(id, action).subscribe({
       next: () => {
-        this.toast.success(action === 'accept' ? 'Zaakceptowano' : 'Odrzucono');
-        this.load();
+        if (action === 'accept') {
+          this.toast.success('Zaakceptowano!', 'Rezerwacja została utworzona');
+          void this.router.navigate(['/bookings']);
+        } else {
+          this.toast.success('Odrzucono');
+          this.load();
+        }
       },
       error: (err) => this.toast.error(err?.error?.error ?? 'Błąd'),
     });
