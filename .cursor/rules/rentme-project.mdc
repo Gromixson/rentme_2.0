@@ -1,0 +1,70 @@
+---
+description: RentMe 2.0 app — Angular 21 + Firebase, PRD, feature conventions
+globs:
+  - "src/**"
+  - "angular.json"
+  - "package.json"
+  - "package-lock.json"
+  - "tsconfig*.json"
+  - "firebase.json"
+  - "firestore.rules"
+  - "storage.rules"
+  - "README.md"
+alwaysApply: false
+---
+
+# RentMe 2.0 — application rules
+
+## Stack (this repo)
+
+| Layer | Choice |
+|-------|--------|
+| UI | Angular 21, standalone components, SCSS, `provideRouter` |
+| Auth / DB / files | Firebase (SDK `firebase`, **not** `@angular/fire` on Angular 21) |
+| Wiring | `provideRentMeFirebase()` in `src/app/app.config.ts` |
+| Inject tokens | `FIREBASE_AUTH`, `FIREBASE_FIRESTORE`, `FIREBASE_STORAGE` from `src/app/core/firebase/` |
+
+**Do not** add Supabase, Astro, Next, or re-scaffold with `10x-astro-starter` unless `context/foundation/tech-stack.md` is deliberately changed.
+
+Hand-off on disk: `starter_id: angular` + Firebase described in `## Why this stack`.
+
+## Product source of truth
+
+- `context/foundation/prd.md` — FR-001…FR-008, non-goals
+- `context/foundation/tech-stack.md` — stack metadata
+- Domain rule: date-aware rental matching; confirmed bookings block calendar
+
+## Code layout
+
+```
+src/app/
+  core/       # firebase, api, auth guards, models
+  features/   # auth | seeker | provider | bookings
+  shared/     # dumb UI only
+```
+
+- Domain reads/writes via **`ApiService`** (`core/api/`), not Firestore in components
+- Auth: Firebase SDK in `AuthService`; login is **not** `POST /api/auth/login`
+- API errors: `err?.error?.error` ← `{ error: string }`
+- Routes in `app.routes.ts`; `/seeker` and `/provider` use `roleGuard`
+
+## Project skills
+
+| Invoke | When |
+|--------|------|
+| `rentme-stack` | Structure, MVP scope |
+| `rentme-firebase` | Auth, Firestore model, rules, emulators |
+| `rentme-feature` | Implement a specific FR / US |
+
+## Config & secrets
+
+- `src/environments/environment.example.ts` → copy to `environment.ts` (gitignored)
+- Never commit real Firebase keys
+
+## MVP out of scope
+
+Payments, in-app chat, OAuth, delivery logistics, favorites (FR-009).
+
+## Course chain (context only)
+
+For `/10x-init` … `/10x-agents-md` use files under `context/` — see `10x-course.mdc` and `.cursor/skills/README.md`. Do not paste full PRD into every rule file; reference `@context/foundation/prd.md`.
