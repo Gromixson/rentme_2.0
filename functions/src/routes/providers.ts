@@ -110,10 +110,52 @@ function respondHttpError(res: Response, code: string, err?: unknown): void {
   res.status(500).json({ error: 'Błąd serwera' });
 }
 
-type RespondTxResult =
+export type RespondTxResult =
   | { status: 'ACCEPTED'; bookingId: string }
   | { status: 'DECLINED'; bookingId: null }
   | { errorCode: string };
+
+/** Transaction body for respond — exported for Phase 1 characterization tests; moves to services/ in Phase 3. */
+export async function executeRespondTx(
+  tx: FirebaseFirestore.Transaction,
+  requestRef: FirebaseFirestore.DocumentReference,
+  providerId: string,
+  action: 'accept' | 'decline',
+  requestId: string,
+): Promise<RespondTxResult> {
+  const snap = await tx.get(requestRef);
+  if (!snap.exists) throw new Error('NOT_FOUND');
+  const data = snap.data() as RequestDoc;
+  if (data.providerId !== providerId) throw new Error('FORBIDDEN');
+  if (data.status !== 'PENDING') throw new Error('NOT_PENDING');
+  if (data.expiresAt.toMillis() <= Date.now()) {
+    tx.update(requestRef, { status: 'TIMEOUT' });
+    return { errorCode: 'TIMEOUT' };
+  }
+
+  if (action === 'decline') {
+    tx.update(requestRef, { status: 'DECLINED' });
+    return { status: 'DECLINED', bookingId: null };
+  }
+
+  tx.update(requestRef, { status: 'ACCEPTED' });
+  const bookingRef = db().collection('bookings').doc();
+  const booking: BookingDoc = {
+    requestId,
+    providerId: data.providerId,
+    seekerId: data.seekerId,
+    categoryId: data.categoryId,
+    status: 'CONFIRMED',
+    createdAt: Timestamp.now(),
+    startTime: Timestamp.now(),
+  };
+  tx.set(bookingRef, booking);
+
+  const providerRef = db().collection('providers').doc(providerId);
+  tx.update(providerRef, { isOnline: false, updatedAt: Timestamp.now() });
+
+  return { status: 'ACCEPTED', bookingId: bookingRef.id };
+}
 
 router.post('/requests/:id/respond', requireAuth, async (req: AuthedRequest, res) => {
   const requestId = req.params.id;
@@ -125,40 +167,9 @@ router.post('/requests/:id/respond', requireAuth, async (req: AuthedRequest, res
 
   const requestRef = db().collection('requests').doc(requestId);
   try {
-    const result = await db().runTransaction(async (tx): Promise<RespondTxResult> => {
-      const snap = await tx.get(requestRef);
-      if (!snap.exists) throw new Error('NOT_FOUND');
-      const data = snap.data() as RequestDoc;
-      if (data.providerId !== req.uid) throw new Error('FORBIDDEN');
-      if (data.status !== 'PENDING') throw new Error('NOT_PENDING');
-      if (data.expiresAt.toMillis() <= Date.now()) {
-        tx.update(requestRef, { status: 'TIMEOUT' });
-        return { errorCode: 'TIMEOUT' };
-      }
-
-      if (action === 'decline') {
-        tx.update(requestRef, { status: 'DECLINED' });
-        return { status: 'DECLINED', bookingId: null };
-      }
-
-      tx.update(requestRef, { status: 'ACCEPTED' });
-      const bookingRef = db().collection('bookings').doc();
-      const booking: BookingDoc = {
-        requestId,
-        providerId: data.providerId,
-        seekerId: data.seekerId,
-        categoryId: data.categoryId,
-        status: 'CONFIRMED',
-        createdAt: Timestamp.now(),
-        startTime: Timestamp.now(),
-      };
-      tx.set(bookingRef, booking);
-
-      const providerRef = db().collection('providers').doc(req.uid!);
-      tx.update(providerRef, { isOnline: false, updatedAt: Timestamp.now() });
-
-      return { status: 'ACCEPTED', bookingId: bookingRef.id };
-    });
+    const result = await db().runTransaction(async (tx) =>
+      executeRespondTx(tx, requestRef, req.uid!, action, requestId),
+    );
 
     if ('errorCode' in result) {
       respondHttpError(res, result.errorCode);

@@ -115,3 +115,14 @@ Implementacja: [`scripts/mission-status.mjs`](../../scripts/mission-status.mjs) 
 - Uruchomienie: `git diff HEAD~1 | npm run review:diff`
 - Metryki tokenów na stderr; structured JSON na stdout
 - CI / lefthook — planowane w **M5L3**
+
+---
+
+## M5L5 — Async & Remote Agents
+
+Delegacja bounded (Phase 1 `refactor-opportunities`) z kontraktem `/goal` i dry-run Tryb 2 (cloud zablokowany — brak remote):
+
+- Change: [`context/changes/async-remote-agents/`](../changes/async-remote-agents/)
+- Kontrakt: [`delegation-contract.md`](../changes/async-remote-agents/delegation-contract.md)
+- Skill stub: `.cursor/skills/10x-goal-implement/SKILL.md`
+- Implementacja lokalna: `functions/src/routes/providers.respond.test.ts` (6 testów, Tryb 1 headless)

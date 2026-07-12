@@ -110,14 +110,14 @@
 
 **Status:** **âś… ukoĹ„czone** (2026-07-12)
 
-| Element                           | Stan                                              |
-| --------------------------------- | ------------------------------------------------- |
-| `agents/code-review/`             | âś… standalone ESM + TypeScript                   |
-| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary           |
-| OpenRouter + metryki `totalUsage` | âś… stderr                                        |
-| `AGENTS.md` inject                | âś… relative path z repo root                     |
-| Root script `review:diff`         | âś…                                               |
-| CI integracja                     | ✅ M5L3 — `ai-code-review.yml` + composite action |
+| Element                           | Stan                                    |
+| --------------------------------- | --------------------------------------- |
+| `agents/code-review/`             | âś… standalone ESM + TypeScript         |
+| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary |
+| OpenRouter + metryki `totalUsage` | âś… stderr                              |
+| `AGENTS.md` inject                | âś… relative path z repo root           |
+| Root script `review:diff`         | âś…                                     |
+| CI integracja                     | âŹł M5L3 (poza scope L2)                |
 
 ### M5L3 — CI/CD code review (GHA + promptfoo)
 
@@ -133,7 +133,9 @@
 | readPlan (optional)                                           | ✅ `review-with-tools.js`               |
 | Change folder                                                 | ✅ `context/changes/ci-cd-code-review/` |
 
-**Status:** **âś… ukoĹ„czone** (2026-07-12)
+### M5L4 — AI toolkit registry (GH Packages)
+
+**Status:** **✅ ukończone** (2026-07-12)
 
 | Element                                | Stan                                               |
 | -------------------------------------- | -------------------------------------------------- |
@@ -141,7 +143,20 @@
 | `context/changes/ai-toolkit-registry/` | âś… decision (Model 1 GH Packages), plan, research |
 | `npm run toolkit:install`              | âś… zweryfikowane lokalnie                         |
 | Publish workflow                       | âś… `.github/workflows/publish-ai-toolkit.yml`     |
-| Publish na ĹĽywo                       | âŹł wymaga `git remote`                            |
+| Publish na żywo                        | ⏳ wymaga `git remote`                             |
+
+### M5L5 — Async & Remote Agents (delegacja + dry-run)
+
+- **Status:** **✅ ukończone** (2026-07-12)
+- **Change-id:** `async-remote-agents`
+- **Wybrane zadanie:** Phase 1 `refactor-opportunities` — Vitest respond harness (6 scenariuszy)
+- **Tryb:** Tryb 2 sandbox **dry-run** (brak remote) + Tryb 1 headless lokalnie
+- **Wykonane:**
+  - `context/changes/async-remote-agents/` — decision, delegation-contract, change, requirements, plan, dry-run, review
+  - Skill stub `.cursor/skills/10x-goal-implement/SKILL.md` (10x-cli `auth_expired`)
+  - `functions/src/routes/providers.respond.test.ts` + export `executeRespondTx` — **15 testów PASS**
+  - `refactor-opportunities/plan.md` Phase 1 → done
+- **Moduł 5 Innovate path:** **KOMPLETNY** (L1 opportunity map · L2 code review · L3 CI review · L4 toolkit · L5 async delegation)
 
 ### M3L5 â€” debugging lesson (swallowed errors)
 
@@ -171,28 +186,29 @@
 
 ## UkoĹ„czone (skrĂłt â€” ĹĽeby backlog byĹ‚ uĹĽyteczny)
 
-| Element                | DowĂłd / commit                                                                |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| M2L1 roadmap           | `context/foundation/roadmap.md`                                                |
-| M2L2 plan              | change plany pod `context/changes/`                                            |
-| M2L3 review            | impl-review w changes                                                          |
-| M2L4 research          | `infra-research.md`, `context/deployment/`                                     |
-| M2L5 parallel merge    | `context/changes/m2l5-parallel-note.md`; merge worktree â†’ `d117768`          |
-| M3L1 test-plan         | `context/foundation/test-plan.md`                                              |
-| M3L2 Vitest            | `request-timeout-expiry` phase 0; `npm run functions:test`                     |
-| M3L3 hooks             | lefthook + `.cursor/hooks.json`; w `d117768`                                   |
-| M1L5 deploy            | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app   |
-| Merge baseline         | `d117768` â€” parallel slices, hooks, Vitest, CI gates                         |
-| M3L4 E2E scaffold      | `e599836` â€” Playwright + specs (bez peĹ‚nego run z creds)                    |
-| M4L1 context TOC       | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`               |
-| M4L2 repo-map          | `context/map/repo-map.md` + artefakty 1â€“3                                    |
-| M4L3 deep focus S-06   | `provider-accept-booking-flow/` â€” change.md + research.md (E2E trace, dĹ‚ug) |
-| M4L4 refactor plan     | `refactor-opportunities/` â€” research + plan guard-first (bez kodu)           |
-| Firebase Storage rules | `rentme2-76ba8` — `storage.rules` deploy 2026-07-12                            |
-| M4L5 domain + report   | `context/domain/*`, `architect-report.md` â€” DDD + zamkniÄ™cie M4             |
-| M5L2 code review agent | `agents/code-review/` — OpenRouter, `npm run review:diff`                      |
-| M5L3 CI code review    | composite action, `ai-code-review.yml`, promptfoo evals                        |
-| M5L4 AI toolkit        | `packages/rentme-ai-toolkit/`; `npm run toolkit:install`; GH Packages ready    |
+| Element                | DowĂłd / commit                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| M2L1 roadmap           | `context/foundation/roadmap.md`                                                    |
+| M2L2 plan              | change plany pod `context/changes/`                                                |
+| M2L3 review            | impl-review w changes                                                              |
+| M2L4 research          | `infra-research.md`, `context/deployment/`                                         |
+| M2L5 parallel merge    | `context/changes/m2l5-parallel-note.md`; merge worktree â†’ `d117768`              |
+| M3L1 test-plan         | `context/foundation/test-plan.md`                                                  |
+| M3L2 Vitest            | `request-timeout-expiry` phase 0; `npm run functions:test`                         |
+| M3L3 hooks             | lefthook + `.cursor/hooks.json`; w `d117768`                                       |
+| M1L5 deploy            | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app       |
+| Merge baseline         | `d117768` â€” parallel slices, hooks, Vitest, CI gates                             |
+| M3L4 E2E scaffold      | `e599836` â€” Playwright + specs (bez peĹ‚nego run z creds)                        |
+| M4L1 context TOC       | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`                   |
+| M4L2 repo-map          | `context/map/repo-map.md` + artefakty 1â€“3                                        |
+| M4L3 deep focus S-06   | `provider-accept-booking-flow/` â€” change.md + research.md (E2E trace, dĹ‚ug)     |
+| M4L4 refactor plan     | `refactor-opportunities/` â€” research + plan guard-first (bez kodu)               |
+| Firebase Storage rules | `rentme2-76ba8` — `storage.rules` deploy 2026-07-12                                |
+| M4L5 domain + report   | `context/domain/*`, `architect-report.md` â€” DDD + zamkniÄ™cie M4                 |
+| M5L2 code review agent | `agents/code-review/` — OpenRouter, `npm run review:diff`                          |
+| M5L3 CI code review    | composite action, `ai-code-review.yml`, promptfoo evals                            |
+| M5L4 AI toolkit        | `packages/rentme-ai-toolkit/`; `npm run toolkit:install`; GH Packages ready        |
+| M5L5 async delegation  | `context/changes/async-remote-agents/`; Phase 1 respond tests; Moduł 5 Innovate ✅ |
 
 ---
 

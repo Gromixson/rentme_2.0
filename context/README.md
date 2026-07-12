@@ -19,7 +19,11 @@ Artefakty pośrednie: [`map/artifact-1-territory.md`](map/artifact-1-territory.m
 
 **[`champion/opportunity-map.md`](champion/opportunity-map.md)** — mapa możliwości (sygnały tarcia, Kup/Uzupełnij/Zbuduj).  
 **[`champion/mom-test-questions.md`](champion/mom-test-questions.md)** — pytania Mom Test (draft).  
-Digest statusu: `npm run status:digest` → [`scripts/mission-status.mjs`](../scripts/mission-status.mjs); opcjonalny zapis: `npm run status:digest:write`.  
+Digest statusu: `npm run status:digest` → [`scripts/mission-status.mjs`](../scripts/mission-status.mjs); opcjonalny zapis: `npm run status:digest:write`.
+
+## Async & Remote Agents (M5L5)
+
+**[`changes/async-remote-agents/`](changes/async-remote-agents/)** — kontrakt delegacji `/goal`, dry-run Tryb 2, Phase 1 respond tests (headless). Powiązanie: [`refactor-opportunities/plan.md`](changes/refactor-opportunities/plan.md).  
 **M5L4:** [`changes/ai-toolkit-registry/`](changes/ai-toolkit-registry/) — paczka `@rentme/ai-toolkit`; `npm run toolkit:install`.
 
 ## Podkatalogi

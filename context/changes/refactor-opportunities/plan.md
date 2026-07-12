@@ -62,9 +62,9 @@ Dodać testy Vitest **zanim** dotkniemy logiki produkcyjnej respond. Wzorzec: mo
 
 ### Success criteria (auto)
 
-- [ ] `npm run functions:test` — wszystkie stare + nowe testy **PASS**
-- [ ] Co najmniej **5** przypadków respond (accept, decline, timeout, not_pending, forbidden)
-- [ ] CI `.github/workflows/ci.yml` — `functions:test` green
+- [x] `npm run functions:test` — wszystkie stare + nowe testy **PASS** (15 total, 2026-07-12)
+- [x] Co najmniej **5** przypadków respond (accept, decline, timeout, not_pending, forbidden) — 6 w `providers.respond.test.ts`
+- [ ] CI `.github/workflows/ci.yml` — `functions:test` green (wymaga git remote)
 
 ### Success criteria (manual — opcjonalnie)
 
@@ -195,12 +195,12 @@ Zaktualizować dokumentację postępu; **nie** implementować E2E creds w tym ch
 
 ## Progress (format `/10x-implement`)
 
-| Phase | Opis                           | Status  | Commit | Notes                                           |
-| ----- | ------------------------------ | ------- | ------ | ----------------------------------------------- |
-| 1     | Respond characterization tests | pending | —      | `/10x-implement refactor-opportunities phase 1` |
-| 2     | Shared expiry guard            | pending | —      | Wymaga phase 1 green                            |
-| 3     | Extract respond service        | pending | —      | Strangler                                       |
-| 4     | Docs handoff                   | pending | —      | Backlog + opcjonalnie verification.md           |
+| Phase | Opis                           | Status  | Commit | Notes                                              |
+| ----- | ------------------------------ | ------- | ------ | -------------------------------------------------- |
+| 1     | Respond characterization tests | done    | M5L5   | Headless lokalnie (async dry-run); 6 testów Vitest |
+| 2     | Shared expiry guard            | pending | —      | Wymaga phase 1 green                               |
+| 3     | Extract respond service        | pending | —      | Strangler                                          |
+| 4     | Docs handoff                   | pending | —      | Backlog + opcjonalnie verification.md              |
 
 ---
 
