@@ -110,14 +110,38 @@
 
 **Status:** **âś… ukoĹ„czone** (2026-07-12)
 
-| Element                           | Stan                                    |
-| --------------------------------- | --------------------------------------- |
-| `agents/code-review/`             | âś… standalone ESM + TypeScript         |
-| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary |
-| OpenRouter + metryki `totalUsage` | âś… stderr                              |
-| `AGENTS.md` inject                | âś… relative path z repo root           |
-| Root script `review:diff`         | âś…                                     |
-| CI integracja                     | âŹł M5L3 (poza scope L2)                |
+| Element                           | Stan                                              |
+| --------------------------------- | ------------------------------------------------- |
+| `agents/code-review/`             | âś… standalone ESM + TypeScript                   |
+| `ToolLoopAgent` + `Output.object` | âś… 5 scores, verdict, markdown summary           |
+| OpenRouter + metryki `totalUsage` | âś… stderr                                        |
+| `AGENTS.md` inject                | âś… relative path z repo root                     |
+| Root script `review:diff`         | âś…                                               |
+| CI integracja                     | ✅ M5L3 — `ai-code-review.yml` + composite action |
+
+### M5L3 — CI/CD code review (GHA + promptfoo)
+
+**Status:** **✅ ukończone** (2026-07-12)
+
+| Element                                                       | Stan                                    |
+| ------------------------------------------------------------- | --------------------------------------- |
+| 6 kryteriów + `documentation`                                 | ✅ `review-schema.ts`                   |
+| Composite action                                              | ✅ `.github/actions/code-review/`       |
+| Workflow PR → `master`                                        | ✅ `ai-code-review.yml`                 |
+| Labele `ai-cr:passed` / `ai-cr:failed` / retry `ai-cr:review` | ✅ workflow                             |
+| promptfoo evals                                               | ✅ `agents/code-review/evals/`          |
+| readPlan (optional)                                           | ✅ `review-with-tools.js`               |
+| Change folder                                                 | ✅ `context/changes/ci-cd-code-review/` |
+
+**Status:** **âś… ukoĹ„czone** (2026-07-12)
+
+| Element                                | Stan                                               |
+| -------------------------------------- | -------------------------------------------------- |
+| `packages/rentme-ai-toolkit/`          | âś… skill, rules, prompts, install/uninstall       |
+| `context/changes/ai-toolkit-registry/` | âś… decision (Model 1 GH Packages), plan, research |
+| `npm run toolkit:install`              | âś… zweryfikowane lokalnie                         |
+| Publish workflow                       | âś… `.github/workflows/publish-ai-toolkit.yml`     |
+| Publish na ĹĽywo                       | âŹł wymaga `git remote`                            |
 
 ### M3L5 â€” debugging lesson (swallowed errors)
 
@@ -166,7 +190,9 @@
 | M4L4 refactor plan     | `refactor-opportunities/` â€” research + plan guard-first (bez kodu)           |
 | Firebase Storage rules | `rentme2-76ba8` — `storage.rules` deploy 2026-07-12                            |
 | M4L5 domain + report   | `context/domain/*`, `architect-report.md` â€” DDD + zamkniÄ™cie M4             |
-| M5L2 code review agent | `agents/code-review/` â€” ToolLoopAgent, OpenRouter, `npm run review:diff`     |
+| M5L2 code review agent | `agents/code-review/` — OpenRouter, `npm run review:diff`                      |
+| M5L3 CI code review    | composite action, `ai-code-review.yml`, promptfoo evals                        |
+| M5L4 AI toolkit        | `packages/rentme-ai-toolkit/`; `npm run toolkit:install`; GH Packages ready    |
 
 ---
 

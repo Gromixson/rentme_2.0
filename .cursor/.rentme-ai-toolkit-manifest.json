@@ -1,0 +1,8 @@
+{
+  "package": "@rentme/ai-toolkit",
+  "version": "0.1.0",
+  "profile": "cursor",
+  "installedAt": "2026-07-12T21:43:32.337Z",
+  "agentsMd": "AGENTS.md",
+  "files": [".cursor/prompts/review-pr.md", ".cursor/skills/rentme-code-review/SKILL.md"]
+}

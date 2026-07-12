@@ -1,0 +1,30 @@
+{
+  "name": "@rentme/ai-toolkit",
+  "version": "0.1.0",
+  "description": "Współdzielony rejestr skilli, reguł i promptów AI dla zespołu RentMe",
+  "type": "module",
+  "files": [
+    "install.mjs",
+    "uninstall.mjs",
+    "skills",
+    "rules",
+    "prompts",
+    "README.md"
+  ],
+  "scripts": {
+    "install:local": "node install.mjs",
+    "uninstall:local": "node uninstall.mjs"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OWNER/rentme_2.0.git",
+    "directory": "packages/rentme-ai-toolkit"
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  }
+}

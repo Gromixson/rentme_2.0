@@ -31,13 +31,14 @@
 
 ### Sygnał 2: Brak git remote
 
-| Pole                           | Treść                                                                                                                                                 |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sygnał tarcia**              | Branchy feature (`m2l5-parallel-note.md`) nie mogą być pushowane; `gh pr create` niedostępne; CI w `.github/workflows/ci.yml` nie uruchomi się na PR. |
-| **SaaS / domyślna odpowiedź**  | GitHub + GitHub Actions + `gh` CLI — standardowy stack review.                                                                                        |
-| **Cienki helper (complement)** | **Release readiness check** — sekcja digestu: `git remote` ✓/✗, `gh` w PATH ✓/✗, ostatni commit, branch.                                              |
-| **Pierwsza użyteczna wersja**  | Linia w digestu: `Remote: brak` + link do instrukcji w backlogu.                                                                                      |
-| **Klasyfikacja**               | **Kup** — problem rozwiązuje utworzenie repo na GitHubie; helper tylko przypomina.                                                                    |
+| Pole                           | Treść                                                                                                                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Sygnał tarcia**              | Branchy feature (`m2l5-parallel-note.md`) nie mogą być pushowane; `gh pr create` niedostępne; CI w `.github/workflows/ci.yml` nie uruchomi się na PR.                                                                          |
+| **SaaS / domyślna odpowiedź**  | GitHub + GitHub Actions + `gh` CLI — standardowy stack review.                                                                                                                                                                 |
+| **Cienki helper (complement)** | **Release readiness check** — sekcja digestu: `git remote` ✓/✗, `gh` w PATH ✓/✗, ostatni commit, branch.                                                                                                                       |
+| **Pierwsza użyteczna wersja**  | Linia w digestu: `Remote: brak` + link do instrukcji w backlogu.                                                                                                                                                               |
+| **Klasyfikacja**               | **Kup** — problem rozwiązuje utworzenie repo na GitHubie; helper tylko przypomina.                                                                                                                                             |
+| **M5L3 (2026-07-12)**          | **Zbudowano:** [`agents/code-review/README.md`](../../agents/code-review/README.md) + [`.github/workflows/ai-code-review.yml`](../../.github/workflows/ai-code-review.yml) — aktywacja po `git remote` + `OPENROUTER_API_KEY`. |
 
 ### Sygnał 3: 10x CLI auth timeout
 
@@ -88,6 +89,21 @@ Ryzyko danych: niskie — tylko pliki lokalne i exit code testów; env vars spra
 ```
 
 Implementacja: [`scripts/mission-status.mjs`](../../scripts/mission-status.mjs) · `npm run status:digest`
+
+---
+
+## M5L4 — Shared AI Registry
+
+**Model docelowy:** GitHub Packages (`@rentme/ai-toolkit`) — patrz [`context/changes/ai-toolkit-registry/decision.md`](../changes/ai-toolkit-registry/decision.md).
+
+| Element          | Ścieżka                                                            |
+| ---------------- | ------------------------------------------------------------------ |
+| Paczka           | [`packages/rentme-ai-toolkit/`](../../packages/rentme-ai-toolkit/) |
+| Install          | `npm run toolkit:install`                                          |
+| Skill            | `.cursor/skills/rentme-code-review/` (po instalacji)               |
+| Agent CLI (M5L2) | [`agents/code-review/`](../../agents/code-review/)                 |
+
+**Evidence Champion (screenshots później):** struktura `packages/rentme-ai-toolkit/`, wynik `npm run toolkit:install`, blok sentinel w `AGENTS.md`, manifest `.cursor/.rentme-ai-toolkit-manifest.json`.
 
 ---
 

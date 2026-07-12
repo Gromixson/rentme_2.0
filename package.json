@@ -17,6 +17,8 @@
     "hooks:verify": "node scripts/hooks/verify-hooks.mjs",
     "status:digest": "node scripts/mission-status.mjs",
     "status:digest:write": "node scripts/mission-status.mjs --write",
+    "toolkit:install": "node packages/rentme-ai-toolkit/install.mjs",
+    "toolkit:uninstall": "node packages/rentme-ai-toolkit/uninstall.mjs",
     "functions:build": "npm run build --prefix functions",
     "functions:test": "npm run test --prefix functions",
     "e2e": "playwright test",

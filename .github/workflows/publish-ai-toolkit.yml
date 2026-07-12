@@ -1,0 +1,34 @@
+name: Publish AI Toolkit (tag)
+
+on:
+  push:
+    tags:
+      - 'ai-toolkit-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@rentme'
+
+      - name: Publish @rentme/ai-toolkit
+        working-directory: packages/rentme-ai-toolkit
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Version note
+        run: |
+          echo "Opublikowano tag ${{ github.ref_name }}."
+          echo "Konsumenci: podnieś wersję w package.json i uruchom npm run toolkit:install."
