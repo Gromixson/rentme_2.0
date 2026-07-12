@@ -1,0 +1,126 @@
+# Pending backlog — RentMe 2.0 + kurs 10xDevs
+
+> Ostatnia aktualizacja: 2026-07-12  
+> Cel: jedno miejsce na niedokończone lekcje, slice'y i blokery — żeby łatwo wrócić bez szukania w historii czatu.
+
+---
+
+## Blockers (wymagają działania użytkownika)
+
+### 10x CLI auth
+
+- **Problem:** `npx @przeprogramowani/10x-cli auth` kończy się `auth_timeout` — magic link na **miroslaw.moskalik@gmail.com** nie dotarł (sprawdź spam / filtry).
+- **Skutek:** manifest utknął na **`m1l4`** (`.cursor/.10x-cli-manifest.json`); brak lokalnych skilli **m2l3–m3l5** z paczki kursowej.
+- **Gdy link przyjdzie:**
+  1. `npx @przeprogramowani/10x-cli auth`
+  2. `npx @przeprogramowani/10x-cli sync` (lub `get <lessonId> --tool cursor` dla konkretnej lekcji)
+  3. Zweryfikuj manifest → docelowo `m3l5` po ukończeniu lekcji
+- **Uwaga:** override RentMe w `.cursor/rules/10x-course.mdc` (poza blokiem BEGIN/END) pozostaje — nie nadpisywać przy sync.
+
+### Git remote + GitHub CLI
+
+- **Problem:** repo **bez `git remote`**; **`gh` nie zainstalowany** w PATH.
+- **Skutek:** nie da się pushować branchy z worktree M2L5 (`feature/request-timeout-expiry`, `feature/provider-accept-booking`) ani otwierać PR przez `gh pr create`.
+- **Gdy gotowe:**
+  1. Utwórz repo na GitHubie i `git remote add origin <url>`
+  2. Zainstaluj [GitHub CLI](https://cli.github.com/) i `gh auth login`
+  3. Push branchy + PR według `context/changes/m2l5-parallel-note.md`
+
+### Konta E2E (Playwright)
+
+- **Problem:** brak ustawionych zmiennych środowiskowych dla auth setup.
+- **Wymagane:** `E2E_SEEKER_EMAIL` / `E2E_SEEKER_PASSWORD` oraz `E2E_PROVIDER_EMAIL` / `E2E_PROVIDER_PASSWORD` (dwa osobne konta Firebase Auth w `rentme-b5e34`; provider z kategorią + stawką > 0).
+- **Skutek:** `role-guard.spec.ts` i `accept-booking.spec.ts` są **SKIP**; działa tylko `seed.spec.ts` (gość).
+- **Instrukcja:** `e2e/README.md`
+
+---
+
+## W toku / częściowe
+
+### M3L4 — E2E (Playwright)
+
+**Status:** implementacja **ukończona w repo**; pełny happy path **niezweryfikowany z creds**.
+
+| Element                                              | Stan                                                                  |
+| ---------------------------------------------------- | --------------------------------------------------------------------- |
+| `playwright.config.ts`                               | ✅ projects: guest, setup-seeker/provider, role-guard, accept-booking |
+| `e2e/auth.setup.ts` + `helpers/`                     | ✅ storageState                                                       |
+| `e2e/seed.spec.ts`                                   | ✅ R-08                                                               |
+| `e2e/role-guard.spec.ts`                             | ✅ R-07 (wymaga creds)                                                |
+| `e2e/accept-booking.spec.ts`                         | ✅ R-01/R-03 (wymaga dual creds)                                      |
+| `e2e/README.md`, CI stub                             | ✅                                                                    |
+| `context/changes/e2e-critical-flows/verification.md` | ✅ deliberate break + build                                           |
+| Ostatni commit                                       | `e599836` — feat(e2e) M3L4                                            |
+| Run z kontami Firebase                               | ⏳ **pending** — zależy od blocker E2E env                            |
+
+### M4L1 — Context architecture at scale
+
+- **Status:** **✅ ukończone** (2026-07-12)
+- **Wykonane:** refaktor `AGENTS.md` jako TOC (~76→68 linii); `context/README.md`; audyt w `context/foundation/agents-md-review.md`; ladder **step 1** (bez per-module AGENTS/context).
+- **Architect path pending:** L2–L5 — per-area rules, nested context, split AGENTS — dopiero przy sygnałach skali (multi-team, >200 linii reguł, powtarzalne błędy per moduł).
+
+### M3L5 — debugging lesson (swallowed errors)
+
+- **Status:** **NIE rozpoczęte**
+- **Zadanie kursowe:** audyt „połykanych” błędów w backendzie — RentMe odpowiednik: `functions/src/` (routes, services, transakcje Firestore).
+- **Kontekst lekcji:** szukaj `catch` bez logowania / bez mapowania na `{ error: string }`; porównaj z konwencją w `AGENTS.md` i `provider-accept-booking` phase 1.
+- **Blokada:** skill m3l5 z paczki CLI — wymaga odblokowania **10x auth** (powyżej).
+
+### `provider-accept-booking` — Phase 3
+
+- **Status:** Phase 1 (API errors) ✅, Phase 2 (provider UX → `/bookings`) ✅ — merge w `d117768`
+- **Phase 3 pending:** manualna checklista happy path **MVP §7** (kroki 3–5): accept → jeden booking u obu stron; decline/timeout → brak bookingu.
+- **Pliki:** `context/changes/provider-accept-booking/plan.md` §Phase 3; roadmap S-06 nadal `in-progress`.
+
+### `request-timeout-expiry` — Phases 1–4
+
+| Phase    | Opis                                             | Stan                                                               |
+| -------- | ------------------------------------------------ | ------------------------------------------------------------------ |
+| 0        | Vitest unit (R-04), M3L2                         | ✅ 9 testów                                                        |
+| 1        | Index `status+expiresAt` + scheduler tx          | ✅ kod w `firestore.indexes.json` + `requests.ts`; merge `a92e190` |
+| 1 deploy | Indeks wdrożony                                  | ✅ `context/deployment/deployment-result.md` (2026-07-12)          |
+| 2        | API read-path consistency                        | ⏳ pending                                                         |
+| 3        | Seeker UX verification (timer/poll)              | ⏳ pending                                                         |
+| 4        | Manual checklist MVP §7 negatywny + roadmap S-05 | ⏳ pending                                                         |
+
+---
+
+## Ukończone (skrót — żeby backlog był użyteczny)
+
+| Element             | Dowód / commit                                                               |
+| ------------------- | ---------------------------------------------------------------------------- |
+| M2L1 roadmap        | `context/foundation/roadmap.md`                                              |
+| M2L2 plan           | change plany pod `context/changes/`                                          |
+| M2L3 review         | impl-review w changes                                                        |
+| M2L4 research       | `infra-research.md`, `context/deployment/`                                   |
+| M2L5 parallel merge | `context/changes/m2l5-parallel-note.md`; merge worktree → `d117768`          |
+| M3L1 test-plan      | `context/foundation/test-plan.md`                                            |
+| M3L2 Vitest         | `request-timeout-expiry` phase 0; `npm run functions:test`                   |
+| M3L3 hooks          | lefthook + `.cursor/hooks.json`; w `d117768`                                 |
+| M1L5 deploy         | `context/deployment/deployment-result.md`; prod https://rentme-b5e34.web.app |
+| Merge baseline      | `d117768` — parallel slices, hooks, Vitest, CI gates                         |
+| M3L4 E2E scaffold   | `e599836` — Playwright + specs (bez pełnego run z creds)                     |
+| M4L1 context TOC    | `AGENTS.md` refactor; `context/README.md`; `agents-md-review.md`             |
+
+---
+
+## Następne kroki po odblokowaniu (kolejność)
+
+1. **10x auth + sync** — odblokuj m2l3–m3l5; zaktualizuj manifest poza `m1l4`.
+2. **E2E creds** — utwórz konta Firebase, ustaw env, uruchom `npm run e2e` (pełny suite).
+3. **Dokończ M3L4** — jeśli coś failuje z creds, popraw i uzupełnij `e2e-critical-flows/verification.md`.
+4. **M3L5 swallowed-error audit** — przejrzyj `functions/src/`, napraw ciche `catch`, dopisz wpis do `lessons.md` jeśli wzorzec się powtarza.
+5. **Git remote + push** — opublikuj branchy feature; PR dla review.
+6. **P0 testy `provider-accept-booking`** — R-01/R-02 w `test-plan.md` (unit/harness respond accept/decline).
+7. **`request-timeout-expiry` phases 2–4** — API consistency, seeker UX, manual §7 negatywny.
+8. **`provider-accept-booking` phase 3** — manual MVP §7 happy path → roadmap S-06 `done`.
+
+---
+
+## Powiązane dokumenty
+
+- [`roadmap.md`](roadmap.md) — slice'y S-01…S-09
+- [`test-plan.md`](test-plan.md) — ryzyka R-01…R-10, fazy testów
+- [`deployment-result.md`](../deployment/deployment-result.md) — prod deploy + blockery M1L5
+- [`m2l5-parallel-note.md`](../changes/m2l5-parallel-note.md) — worktree'y i merge order
+- [`e2e/README.md`](../../e2e/README.md) — env vars Playwright

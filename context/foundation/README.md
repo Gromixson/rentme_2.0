@@ -6,6 +6,8 @@ Cross-change living documents that span multiple changes. Each project picks whi
 
 **Test plan:** [`test-plan.md`](test-plan.md) — risk map, quality gates, and test rollout phases from M3L1 `/10x-test-plan`; hand off to `/10x-new` + implement cycle in M3L2.
 
+**Pending backlog:** [`pending-backlog.md`](pending-backlog.md) — blockery (10x auth, E2E creds, git remote) i odłożone lekcje/kroki; wróć tu po przerwie.
+
 **Implementation spec:** [`MVP.md`](../../MVP.md) at repo root; course PRD updated to match — see [`SOURCES.md`](SOURCES.md).
 
 ## Update convention

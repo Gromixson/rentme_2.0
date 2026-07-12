@@ -1,65 +1,51 @@
 # Repository Guidelines
 
-RentMe 2.0 is an **on-demand service marketplace** (seeker ↔ provider): **Angular 21** (standalone) + **Firebase Auth** + **Cloud Functions API** + Firestore. Implementation detail: `@MVP.md`; product contract: `@context/foundation/prd.md`; stack: `@context/foundation/tech-stack.md`.
+RentMe 2.0 is an **on-demand service marketplace** (seeker ↔ provider): **Angular 21** (standalone) + **Firebase Auth** + **Cloud Functions API** + Firestore. Product contract: `@context/foundation/prd.md`; implementation spec: `@MVP.md`; stack: `@context/foundation/tech-stack.md`.
 
 ## Hard rules
 
-- **Auth in the client:** `signInWithEmailAndPassword` / `signOut` via `FIREBASE_AUTH` — not `POST /api/auth/login` (that endpoint returns 410; it never verified passwords).
-- **Domain data in the client:** HTTP only through `@src/app/core/api/api.service.ts` → `environment.apiUrl`. Default online: Cloud Functions URL in dev (`npm start`); `/api` when served via Firebase Hosting rewrite. Local Functions only with `npm run dev:api` + `apiUrl: '/api'` + `@proxy.conf.json`. Do **not** read/write Firestore from components; do not add `@angular/fire`.
-- Inject tokens `FIREBASE_AUTH`, `FIREBASE_FIRESTORE`, `FIREBASE_STORAGE` from `@src/app/core/firebase/` — wired in `@src/app/app.config.ts`.
-- Copy `@src/environments/environment.example.ts` → `environment.ts` locally; never commit real Firebase keys (see `@.gitignore`).
-- MVP excludes payments, in-app chat, OAuth, and delivery logistics — see non-goals in `@context/foundation/prd.md`.
-- Do not overwrite `context/` when scaffolding; it holds PRD and course artifacts.
+- **Auth in the client:** `signInWithEmailAndPassword` / `signOut` via `FIREBASE_AUTH` — not `POST /api/auth/login` (410; never verified passwords).
+- **Domain data in the client:** HTTP only through `@src/app/core/api/api.service.ts` → `environment.apiUrl`. Default: cloud Functions URL in dev (`npm start`); `/api` via Hosting rewrite. Local Functions: `npm run dev:api` + `apiUrl: '/api'` + `@proxy.conf.json`. Do **not** read/write Firestore from components; do not add `@angular/fire`.
+- Inject `FIREBASE_AUTH`, `FIREBASE_FIRESTORE`, `FIREBASE_STORAGE` from `@src/app/core/firebase/` — wired in `@src/app/app.config.ts`.
+- Copy `@src/environments/environment.example.ts` → `environment.ts` locally; never commit real Firebase keys (`@.gitignore`).
+- MVP excludes payments, in-app chat, OAuth, delivery logistics — `@context/foundation/prd.md` non-goals.
+- Do not overwrite `context/` when scaffolding.
 
-## API errors (project convention)
+## Commands
 
-Backend and Functions return `{ error: string }`. In Angular HTTP error handlers use `err?.error?.error` (see `@src/app/features/provider/dashboard/provider-dashboard.component.ts`).
+| Command                  | Purpose                                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| `npm start`              | Dev server; API via `environment.apiUrl` (cloud Functions URL by default)                           |
+| `npm run dev:api`        | Optional local Functions emulator                                                                   |
+| `npm run build`          | Production build to `dist/rentme` — run after non-trivial changes                                   |
+| `npm test`               | Unit tests (Karma + Jasmine, headless Chrome)                                                       |
+| `npm run functions:test` | Functions unit tests (Vitest)                                                                       |
+| `npm run e2e`            | Playwright E2E — guest seed always; auth needs `E2E_SEEKER_*` / `E2E_PROVIDER_*` (`@e2e/README.md`) |
+| `npm run e2e:ui`         | Playwright UI mode                                                                                  |
+| `npm run hooks:verify`   | Smoke-test Cursor hook scripts                                                                      |
+| `npm run hooks:install`  | Install lefthook pre-commit (Prettier + tsc on staged files)                                        |
 
-## Routing & roles
+## Architecture
 
-- `activeRole` from profile drives home redirect (`@src/app/features/home/home.component.ts`).
-- `/seeker/*` → `roleGuard('SEEKER')`; `/provider/*` → `roleGuard('PROVIDER')` (see `@src/app/app.routes.ts`).
-- Switch role via API `POST /auth/active-role`, then refresh profile.
+| Layer           | Location / notes                                                                                          |
+| --------------- | --------------------------------------------------------------------------------------------------------- |
+| Angular UI      | `src/app/` — `core/` · `features/` (auth, seeker, provider, bookings) · `shared/`                         |
+| API client      | `ApiService` → `environment.apiUrl`; errors `{ error: string }` → `err?.error?.error`                     |
+| Cloud Functions | `functions/src/` — Express routes, Firestore transactions server-side                                     |
+| Firebase        | Auth + Firestore + Storage via injected tokens; rules in `firestore.rules`, `storage.rules`               |
+| Routing         | `@src/app/app.routes.ts` — `/seeker/*` → `roleGuard('SEEKER')`, `/provider/*` → `roleGuard('PROVIDER')`   |
+| Roles           | `activeRole` from profile drives home redirect; switch via `POST /auth/active-role`, then refresh profile |
 
-## Project structure
+Firestore shape (server-side): `@.cursor/skills/rentme-firebase/references/firestore-model.md`. App rules for `src/**`: `@.cursor/rules/rentme-project.mdc`.
 
-```
-src/app/
-  core/       # firebase, api, auth guards, models
-  features/   # auth | seeker | provider | bookings
-  shared/     # presentational UI, toast
-```
+## Conventions
 
-- Routes: `@src/app/app.routes.ts`
-- Firestore shape (server-side): `@.cursor/skills/rentme-firebase/references/firestore-model.md`
+- Standalone components; SCSS per component; Prettier `@.prettierrc`
+- Functions register roles: only `SEEKER` and `PROVIDER` (`@functions/src/routes/auth.ts`)
+- Default **`useEmulators: false`**; optional emulators via `useEmulators: true` in `@src/app/core/firebase/firebase.providers.ts`
+- Commits: short imperative messages (e.g. `feat: add provider request list`)
 
-## Build, test, and development
-
-| Command                  | Purpose                                                                                                     |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `npm start`              | Dev server (`ng serve`); API via `environment.apiUrl` (cloud Functions URL by default)                      |
-| `npm run dev:api`        | Optional: local Functions emulator only                                                                     |
-| `npm run build`          | Production build to `dist/rentme`                                                                           |
-| `npm test`               | Unit tests (Karma + Jasmine, headless Chrome)                                                               |
-| `npm run functions:test` | Functions unit tests (Vitest) — pure expiry/transaction logic in `functions/src/services/*.test.ts`         |
-| `npm run e2e`            | Playwright E2E — guest seed always; auth flows need `E2E_SEEKER_*` / `E2E_PROVIDER_*` (see `e2e/README.md`) |
-| `npm run e2e:ui`         | Playwright UI mode                                                                                          |
-| `npm run hooks:verify`   | Smoke-test Cursor hook scripts (Prettier, tsc, auth test skip)                                              |
-| `npm run hooks:install`  | Install lefthook pre-commit (Prettier check + tsc on staged files)                                          |
-
-Cursor **afterFileEdit** hooks: `@.cursor/hooks.json` → `@scripts/hooks/` (format, typecheck, scoped auth tests). Details: `@context/foundation/test-plan.md` §7, `@.cursor/rules/m3l3-quality-gates.mdc`.
-
-New Firebase project (once): `setup:firestore` → `setup:appengine` → `setup:auth` → `firebase deploy --only functions,firestore:rules`. See `@README.md`.
-
-Run `npm run build` after non-trivial changes.
-
-## Coding style
-
-- Standalone components; SCSS per component
-- Prettier: `@.prettierrc` — `npx prettier --write .` when touching many files
-- App code under `src/`: follow `@.cursor/rules/rentme-project.mdc`
-
-## Agent skills (invoke by name)
+## Agent skills
 
 | Skill             | When                                       |
 | ----------------- | ------------------------------------------ |
@@ -68,16 +54,14 @@ Run `npm run build` after non-trivial changes.
 | `rentme-feature`  | A specific FR/US from PRD                  |
 | `/10x-*`          | Course workflow under `context/` only      |
 
-## Lessons learned
+## Reference
 
-Recurring agent mistakes: `@context/foundation/lessons.md`
-
-## Security and configuration
-
-- Firebase config: `src/environments/environment.ts` (gitignored); default **`useEmulators: false`** (cloud Auth/Firestore)
-- Optional local emulators: `useEmulators: true` — `@src/app/core/firebase/firebase.providers.ts`
-- Functions register roles: only `SEEKER` and `PROVIDER` (see `@functions/src/routes/auth.ts`)
-
-## Commits and PRs
-
-Short imperative messages (e.g. `feat: add provider request list`).
+| Topic               | Path                                                                           |
+| ------------------- | ------------------------------------------------------------------------------ |
+| Context index       | `@context/README.md`                                                           |
+| PRD, roadmap, tests | `@context/foundation/` — `prd.md`, `roadmap.md`, `test-plan.md`, `lessons.md`  |
+| Pending work        | `@context/foundation/pending-backlog.md`                                       |
+| In-flight changes   | `@context/changes/`                                                            |
+| Deploy              | `@context/deployment/`, `@README.md` (one-time Firebase setup)                 |
+| Quality gates       | `@context/foundation/test-plan.md` §7, `@.cursor/rules/m3l3-quality-gates.mdc` |
+| Course chain        | `@.cursor/rules/10x-course.mdc` (applies to `context/**`)                      |
