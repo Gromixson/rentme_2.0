@@ -25,12 +25,10 @@ export async function expireStalePendingRequests(): Promise<number> {
     .get();
 
   let count = 0;
-  const batch = db().batch();
   for (const doc of snap.docs) {
-    batch.update(doc.ref, { status: 'TIMEOUT' });
-    count++;
+    const status = await expirePendingRequest(doc.id);
+    if (status === 'TIMEOUT') count++;
   }
-  if (count > 0) await batch.commit();
   return count;
 }
 

@@ -198,7 +198,7 @@ Manual scenariusz negatywny MVP.md §7 + aktualizacja roadmap.
 
 | Phase | Status | Commit | Notes |
 |-------|--------|--------|-------|
-| 1 — Index + scheduler | pending | — | |
+| 1 — Index + scheduler | done | inline author | composite index + tx per doc in expireStalePendingRequests |
 | 2 — API consistency | pending | — | |
 | 3 — Seeker UX | pending | — | |
 | 4 — Verification | pending | — | |
