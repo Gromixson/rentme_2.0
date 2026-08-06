@@ -11,37 +11,52 @@ import { ToastService } from '../../../shared/services/toast.service';
   selector: 'app-provider-requests',
   imports: [RouterLink, Card, Button, Tag],
   template: `
-    <div class="page">
-      <a routerLink="/provider">← Panel</a>
-      <h1>Oczekujące prośby</h1>
-      @for (r of requests(); track r.id) {
-        <p-card class="item">
-          <p-tag value="PENDING" severity="warn" />
-          <p><strong>{{ r.seekerName ?? 'Klient' }}</strong></p>
-          <p>„{{ r.message }}”</p>
-          <div class="actions">
-            <p-button label="Akceptuj" severity="success" (onClick)="respond(r.id, 'accept')" />
-            <p-button label="Odrzuć" severity="danger" (onClick)="respond(r.id, 'decline')" />
-          </div>
-        </p-card>
-      } @empty {
-        <p>Brak oczekujących próśb.</p>
-      }
+    <div class="page" style="--rm-page-max: 640px">
+      <a routerLink="/provider" class="back-link">← Panel</a>
+      <div class="page-header">
+        <div>
+          <h1>Oczekujące prośby</h1>
+          <p class="page-lede">Akceptacja tworzy rezerwację dla obu stron.</p>
+        </div>
+      </div>
+      <div class="page-stack">
+        @for (r of requests(); track r.id) {
+          <p-card>
+            <p-tag value="Oczekuje" severity="warn" />
+            <p class="seeker">
+              <strong>{{ r.seekerName ?? 'Klient' }}</strong>
+            </p>
+            <p class="msg">„{{ r.message }}”</p>
+            <div class="actions">
+              <p-button label="Akceptuj" severity="success" (onClick)="respond(r.id, 'accept')" />
+              <p-button
+                label="Odrzuć"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="respond(r.id, 'decline')"
+              />
+            </div>
+          </p-card>
+        } @empty {
+          <p class="empty-state">Brak oczekujących próśb.</p>
+        }
+      </div>
     </div>
   `,
   styles: `
-    .page {
-      padding: 1rem;
-      max-width: 640px;
-      margin: 0 auto;
+    .seeker {
+      margin: 0.75rem 0 0.35rem;
     }
-    .item {
-      margin-bottom: 0.75rem;
+    .msg {
+      margin: 0;
+      color: var(--rm-ink-muted);
+      font-style: italic;
     }
     .actions {
       display: flex;
       gap: 0.5rem;
-      margin-top: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
     }
   `,
 })
@@ -60,6 +75,7 @@ export class ProviderRequestsComponent implements OnInit {
   load(): void {
     this.api.getPendingRequests().subscribe({
       next: (items) => this.requests.set(items),
+      error: () => this.toast.error('Nie udało się załadować próśb'),
     });
   }
 

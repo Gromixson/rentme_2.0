@@ -137,4 +137,4 @@ Manual checklist happy path §7 MVP (kroki 3–5), aktualizacja statusu S-06 w r
 | -------------------------- | ------- | -------------------------------------------- | ----------------------------------------------------------------- |
 | 1 — API error mapping      | done    | — (commit blocked: brak git user.name/email) | try/catch + respondHttpError; impl-review F1/F2 fixed; builds OK  |
 | 2 — Provider UX            | done    | inline author                                | auto-navigate to /bookings after accept; toast parity with seeker |
-| 3 — Verification + roadmap | pending | —                                            |                                                                   |
+| 3 — Verification + roadmap | pending | —                                            | Manual MVP §7 checklist documented; needs dual Firebase accounts  |

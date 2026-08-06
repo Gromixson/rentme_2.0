@@ -47,18 +47,14 @@ export class ApiService {
 
   private post<T>(path: string, body: unknown): Observable<T> {
     return this.authHeaders().pipe(
-      switchMap((headers) =>
-        this.http.post<T>(`${this.base}${path}`, body, { headers }),
-      ),
+      switchMap((headers) => this.http.post<T>(`${this.base}${path}`, body, { headers })),
       timeout(API_TIMEOUT_MS),
     );
   }
 
   private put<T>(path: string, body: unknown): Observable<T> {
     return this.authHeaders().pipe(
-      switchMap((headers) =>
-        this.http.put<T>(`${this.base}${path}`, body, { headers }),
-      ),
+      switchMap((headers) => this.http.put<T>(`${this.base}${path}`, body, { headers })),
       timeout(API_TIMEOUT_MS),
     );
   }
@@ -89,9 +85,13 @@ export class ApiService {
   }
 
   seedCategories(): Observable<unknown> {
-    return this.http.post(`${this.base}/categories/seed`, {}, {
-      headers: new HttpHeaders({ 'x-dev-seed': 'true' }),
-    });
+    return this.http.post(
+      `${this.base}/categories/seed`,
+      {},
+      {
+        headers: new HttpHeaders({ 'x-dev-seed': 'true' }),
+      },
+    );
   }
 
   getOnlineProviders(categoryId: string): Observable<ProviderListItem[]> {
@@ -136,6 +136,10 @@ export class ApiService {
 
   getMyRequests(): Observable<ServiceRequest[]> {
     return this.get<ServiceRequest[]>('/requests/my');
+  }
+
+  cancelRequest(id: string): Observable<{ status: 'CANCELLED' }> {
+    return this.post<{ status: 'CANCELLED' }>(`/requests/${id}/cancel`, {});
   }
 
   getMyBookings(): Observable<Booking[]> {

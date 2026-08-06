@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
-import { Card } from 'primeng/card';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -10,39 +9,48 @@ import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Card, InputText, Password, Button],
+  imports: [ReactiveFormsModule, RouterLink, InputText, Password, Button],
   template: `
-    <div class="auth-page">
-      <p-card header="Logowanie">
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          <label>Email</label>
-          <input pInputText formControlName="email" type="email" class="w-full" />
-          <label>Hasło</label>
-          <p-password formControlName="password" [feedback]="false" styleClass="w-full" inputStyleClass="w-full" />
-          <p-button type="submit" label="Zaloguj" [loading]="busy()" class="mt-3" />
-        </form>
-        <p class="mt-3">
-          Nie masz konta? <a routerLink="/auth/register">Zarejestruj się</a>
-        </p>
-      </p-card>
+    <div class="auth-shell">
+      <div class="auth-inner">
+        <a routerLink="/" class="auth-brand">RentMe</a>
+        <p class="auth-tagline">Usługi on-demand — znajdź albo zaproponuj w kilka minut.</p>
+        <div class="auth-panel">
+          <h2>Zaloguj się</h2>
+          <p class="auth-sub">Witaj ponownie. Wróć do próśb i rezerwacji.</p>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <label for="login-email">Email</label>
+            <input
+              id="login-email"
+              pInputText
+              formControlName="email"
+              type="email"
+              class="w-full"
+              autocomplete="email"
+            />
+            <label for="login-password">Hasło</label>
+            <p-password
+              inputId="login-password"
+              formControlName="password"
+              [feedback]="false"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              autocomplete="current-password"
+            />
+            <p-button type="submit" label="Zaloguj" [loading]="busy()" styleClass="w-full mt-3" />
+          </form>
+          <p class="auth-footer">
+            Nie masz konta?
+            <a routerLink="/auth/register">Zarejestruj się</a>
+          </p>
+        </div>
+      </div>
     </div>
   `,
   styles: `
-    .auth-page {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    label {
-      display: block;
-      margin: 0.75rem 0 0.25rem;
-      font-weight: 500;
-    }
-    .w-full {
+    :host ::ng-deep .p-password {
       width: 100%;
-    }
-    .mt-3 {
-      margin-top: 1rem;
+      display: block;
     }
   `,
 })

@@ -3,7 +3,7 @@ project: RentMe
 version: 1
 status: draft
 created: 2026-07-12
-updated: 2026-07-12
+updated: 2026-07-26
 prd_version: 2
 main_goal: learn
 top_blocker: skills
@@ -32,11 +32,11 @@ Rebuild greenfield na kursie — bez migracji danych z poprzedniej wersji. Kanon
 | ID   | ID zmiany                 | Wynik (użytkownik może …)                                                | Wymagania wstępne | Odniesienia do PRD            | Status      |
 | ---- | ------------------------- | ------------------------------------------------------------------------ | ----------------- | ----------------------------- | ----------- |
 | F-01 | prod-observability-gate   | (fundament) podstawowa obserwowalność prod włączona przed demem          | —                 | NFR (błędy widoczne)          | proposed    |
-| S-01 | auth-and-role-switch      | zarejestrować się, zalogować i przełączyć rolę SEEKER ↔ PROVIDER         | —                 | US-01, FR-001, FR-002         | in-progress |
+| S-01 | auth-and-role-switch      | zarejestrować się, zalogować i przełączyć rolę SEEKER ↔ PROVIDER         | —                 | US-01, FR-001, FR-002         | ready       |
 | S-02 | provider-profile-online   | uzupełnić profil providera (kategorie + stawka) i włączyć online         | S-01              | FR-003, FR-007                | ready       |
 | S-03 | categories-and-seed       | przeglądać kategorie z liczbą online i zaseedować dane demo              | S-01              | FR-004, FR-006                | ready       |
 | S-04 | discover-online-providers | zobaczyć listę tylko online providerów w wybranej kategorii              | S-02, S-03        | FR-005                        | ready       |
-| S-05 | seeker-send-request       | wysłać jedną wiadomość-request i śledzić status z timerem                | S-04              | US-01, FR-010, FR-011, FR-013 | ready       |
+| S-05 | seeker-send-request       | wysłać jedną wiadomość-request i śledzić status z timerem                | S-04              | US-01, FR-010, FR-011, FR-013 | in-progress |
 | S-06 | provider-accept-booking   | provider odpowiada TAK/NIE; po TAK powstaje booking u obu stron          | S-05              | US-02, FR-008, FR-012         | in-progress |
 | S-07 | complete-booking          | oznaczyć usługę jako zakończoną (COMPLETED)                              | S-06              | FR-009                        | ready       |
 | S-08 | rate-after-complete       | po COMPLETED wystawić ocenę 1–5; średnia aktualizuje się na liście       | S-07              | US-03, FR-014                 | ready       |
@@ -92,7 +92,7 @@ Fundamenty poniżej zakładają, że te elementy są obecne i NIE tworzą ich po
 - **Blokady:** —
 - **Niewiadome:** —
 - **Ryzyko:** Kod auth istnieje; ryzyko to regresja przy zmianach guardów — weryfikować przed pętlą request→booking.
-- **Status:** in-progress (Phase 1 /10x-implement done 2026-07-12)
+- **Status:** ready (kod auth + role switch w repo; regresja opcjonalna przed demem)
 
 ### S-02: Profil providera i status online
 
@@ -141,7 +141,7 @@ Fundamenty poniżej zakładają, że te elementy są obecne i NIE tworzą ich po
 - **Niewiadome:**
   - Czy timeout wystarczająco niezawodny w demo (scheduler co 1 min + lazy expiry przy odczycie)? — Właściciel: implementer. Blokada: nie.
 - **Ryzyko:** Implementacja scheduler + `resolveRequestStatus` już w `functions/src/services/requests.ts`; w demo sprawdzić scenariusz negatywny TIMEOUT z MVP.md §7.
-- **Status:** ready
+- **Status:** in-progress — **code-complete** (phases 0–3 + cancel soft-delete 2026-07-26); `done` dopiero po phase 4 manual §7 / E2E — `request-timeout-expiry/verification.md`
 
 ### S-06: Akceptacja providera i utworzenie bookingu
 
@@ -153,7 +153,7 @@ Fundamenty poniżej zakładają, że te elementy są obecne i NIE tworzą ich po
 - **Blokady:** —
 - **Niewiadome:** —
 - **Ryzyko:** To jest **kamień milowy walidacji** (rdzeń marketplace); bez tego slice reszta produktu nie ma wartości demonstracyjnej.
-- **Status:** in-progress
+- **Status:** in-progress — **code-complete** (phases 1–2 + Vitest respond); `done` dopiero po phase 3 manual §7 / E2E — `provider-accept-booking/verification-phase-3.md`
 
 ### S-07: Zakończenie usługi
 
@@ -194,18 +194,18 @@ Fundamenty poniżej zakładają, że te elementy są obecne i NIE tworzą ich po
 
 ## Przekazanie do backlogu
 
-| ID mapy drogowej | ID zmiany                 | Sugerowany tytuł problemu                          | Gotowe do `/10x-plan` | Uwagi                                                   |
-| ---------------- | ------------------------- | -------------------------------------------------- | --------------------- | ------------------------------------------------------- |
-| F-01             | prod-observability-gate   | Włączyć obserwowalność prod przed demem            | no                    | Checklist w `monitoring.md`                             |
-| S-01             | auth-and-role-switch      | Zweryfikować auth i przełącznik roli               | yes                   | Kod obecny — plan na regresję/happy path                |
-| S-02             | provider-profile-online   | Zweryfikować profil providera i online/offline     | yes                   | —                                                       |
-| S-03             | categories-and-seed       | Zweryfikować kategorie i seed                      | yes                   | —                                                       |
-| S-04             | discover-online-providers | Zweryfikować listę tylko online providerów         | yes                   | —                                                       |
-| S-05             | seeker-send-request       | Zweryfikować request + timer + TIMEOUT             | yes                   | Scenariusz negatywny MVP.md §7                          |
-| S-06             | provider-accept-booking   | Zweryfikować accept → booking (gwiazda przewodnia) | yes (phase 1)         | **Priorytet** — API errors hardened; UX phase 2 pending |
-| S-07             | complete-booking          | Zweryfikować zakończenie usługi                    | yes                   | —                                                       |
-| S-08             | rate-after-complete       | Zweryfikować ocenę i średnią                       | yes                   | Domknięcie happy path                                   |
-| S-09             | szukam-interest           | Dopracować „Szukam!” (should-have)                 | no                    | Po zamknięciu must-have                                 |
+| ID mapy drogowej | ID zmiany                 | Sugerowany tytuł problemu                          | Gotowe do `/10x-plan` | Uwagi                                                           |
+| ---------------- | ------------------------- | -------------------------------------------------- | --------------------- | --------------------------------------------------------------- |
+| F-01             | prod-observability-gate   | Włączyć obserwowalność prod przed demem            | no                    | Checklist w `monitoring.md`                                     |
+| S-01             | auth-and-role-switch      | Zweryfikować auth i przełącznik roli               | yes                   | Kod obecny — plan na regresję/happy path                        |
+| S-02             | provider-profile-online   | Zweryfikować profil providera i online/offline     | yes                   | —                                                               |
+| S-03             | categories-and-seed       | Zweryfikować kategorie i seed                      | yes                   | —                                                               |
+| S-04             | discover-online-providers | Zweryfikować listę tylko online providerów         | yes                   | —                                                               |
+| S-05             | seeker-send-request       | Zweryfikować request + timer + TIMEOUT             | yes                   | Scenariusz negatywny MVP.md §7                                  |
+| S-06             | provider-accept-booking   | Zweryfikować accept → booking (gwiazda przewodnia) | no (manual only)      | **Priorytet demo** — kod ✅; phase 3 = checklist §7 / E2E creds |
+| S-07             | complete-booking          | Zweryfikować zakończenie usługi                    | yes                   | —                                                               |
+| S-08             | rate-after-complete       | Zweryfikować ocenę i średnią                       | yes                   | Domknięcie happy path                                           |
+| S-09             | szukam-interest           | Dopracować „Szukam!” (should-have)                 | no                    | Po zamknięciu must-have                                         |
 
 ## Otwarte pytania dotyczące mapy drogowej
 

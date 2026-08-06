@@ -22,7 +22,8 @@ export async function requireAuth(
     req.uid = decoded.uid;
     req.email = decoded.email;
     next();
-  } catch {
+  } catch (err) {
+    console.warn('requireAuth: invalid or expired token', err);
     res.status(401).json({ error: 'Nieprawidłowy token' });
   }
 }

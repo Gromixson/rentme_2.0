@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { Tag } from 'primeng/tag';
@@ -13,19 +13,32 @@ import { ToastService } from '../../../shared/services/toast.service';
   template: `
     <div class="page">
       <div class="page-header">
-        <h1>Kategorie usług</h1>
-        <p-button label="Załaduj kategorie" severity="secondary" size="small" (onClick)="seed()" />
+        <div>
+          <h1>Kategorie usług</h1>
+          <p class="page-lede">Wybierz kategorię albo daj znać usługodawcom, że szukasz pomocy.</p>
+        </div>
+        <p-button
+          label="Załaduj kategorie"
+          severity="secondary"
+          size="small"
+          [outlined]="true"
+          (onClick)="seed()"
+        />
       </div>
       @if (loading()) {
-        <p>Ładowanie…</p>
+        <p class="empty-state">Ładowanie…</p>
       } @else if (categories().length === 0) {
-        <p-card>
+        <div class="empty-state">
           <p>Brak kategorii w bazie. Kliknij „Załaduj kategorie”.</p>
-        </p-card>
+        </div>
       } @else {
-        <div class="grid">
-          @for (cat of categories(); track cat.id) {
-            <p-card class="cat-card">
+        <div class="page-grid">
+          @for (cat of categories(); track cat.id; let i = $index) {
+            <p-card
+              styleClass="cat-card"
+              [class.rm-motion-delay-1]="i % 3 === 1"
+              [class.rm-motion-delay-2]="i % 3 === 2"
+            >
               <h3>{{ cat.name }}</h3>
               <p-tag [value]="(cat.onlineCount ?? 0) + ' online'" severity="info" />
               <div class="actions">
@@ -43,30 +56,24 @@ import { ToastService } from '../../../shared/services/toast.service';
     </div>
   `,
   styles: `
-    .page {
-      padding: 1rem;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    h3 {
+      margin: 0 0 0.65rem;
+      font-family: var(--rm-font-display);
+      font-size: 1.2rem;
     }
     .actions {
       display: flex;
       gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: 1.1rem;
       flex-wrap: wrap;
     }
-    h3 {
-      margin: 0 0 0.5rem;
+    :host ::ng-deep .cat-card {
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+    :host ::ng-deep .cat-card:hover {
+      transform: translateY(-3px);
     }
   `,
 })

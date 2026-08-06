@@ -4,9 +4,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
 
 import { provideRentMeFirebase } from './core/firebase';
+import { RentMePreset } from './core/theme/rentme-preset';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -17,7 +17,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: RentMePreset,
+        options: {
+          darkModeSelector: false,
+        },
       },
     }),
     MessageService,

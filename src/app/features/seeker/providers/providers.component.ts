@@ -11,25 +11,36 @@ import { ToastService } from '../../../shared/services/toast.service';
   selector: 'app-providers',
   imports: [RouterLink, Card, Button, Tag],
   template: `
-    <div class="page">
-      <a routerLink="/seeker">← Kategorie</a>
-      <h1>Usługodawcy online</h1>
+    <div class="page" style="--rm-page-max: 720px">
+      <a routerLink="/seeker" class="back-link">← Kategorie</a>
+      <div class="page-header">
+        <div>
+          <h1>Usługodawcy online</h1>
+          <p class="page-lede">Wyślij prośbę do osoby dostępnej w tej chwili.</p>
+        </div>
+      </div>
       @if (loading()) {
-        <p>Ładowanie…</p>
+        <p class="empty-state">Ładowanie…</p>
       } @else if (providers().length === 0) {
-        <p-card>
+        <div class="empty-state">
           <p>Nikt nie jest online w tej kategorii.</p>
           <p-button label="Szukam!" severity="warn" (onClick)="expressInterest()" class="mt-2" />
-        </p-card>
+        </div>
       } @else {
-        <div class="grid">
+        <div class="page-stack">
           @for (p of providers(); track p.id) {
             <p-card>
-              <h3>{{ p.name }}</h3>
-              <p>{{ p.bio || 'Bez opisu' }}</p>
-              <p-tag [value]="p.averageRating + ' ★ (' + p.ratingCount + ')'" />
-              <p class="rate">{{ p.hourlyRate }} zł/h</p>
-              <p-button label="Wyślij prośbę" (onClick)="goRequest(p.id)" />
+              <div class="provider-row">
+                <div>
+                  <h3>{{ p.name }}</h3>
+                  <p class="bio">{{ p.bio || 'Bez opisu' }}</p>
+                  <p-tag [value]="p.averageRating + ' ★ (' + p.ratingCount + ')'" />
+                </div>
+                <div class="provider-cta">
+                  <p class="rate">{{ p.hourlyRate }} zł/h</p>
+                  <p-button label="Wyślij prośbę" (onClick)="goRequest(p.id)" />
+                </div>
+              </div>
             </p-card>
           }
         </div>
@@ -37,21 +48,30 @@ import { ToastService } from '../../../shared/services/toast.service';
     </div>
   `,
   styles: `
-    .page {
-      padding: 1rem;
-      max-width: 720px;
-      margin: 0 auto;
+    h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--rm-font-display);
+      font-size: 1.15rem;
     }
-    .grid {
-      display: grid;
+    .bio {
+      margin: 0 0 0.65rem;
+      color: var(--rm-ink-muted);
+    }
+    .provider-row {
+      display: flex;
+      justify-content: space-between;
       gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .provider-cta {
+      text-align: right;
     }
     .rate {
-      font-weight: 600;
-      margin: 0.5rem 0;
-    }
-    .mt-2 {
-      margin-top: 0.5rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin: 0 0 0.5rem;
+      color: var(--rm-accent);
     }
   `,
 })

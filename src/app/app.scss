@@ -1,4 +1,4 @@
 .main-content {
-  min-height: calc(100vh - 120px);
-  background: #f8fafc;
+  min-height: calc(100vh - var(--rm-header-h, 7.5rem));
+  background: transparent;
 }

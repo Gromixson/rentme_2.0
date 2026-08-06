@@ -6,8 +6,12 @@ import {
   isProviderProfileComplete,
   recalcCategoryOnlineCounts,
 } from '../services/provider';
+import { executeRespondTx } from '../services/respond';
 import { resolveRequestStatus } from '../services/requests';
-import type { BookingDoc, ProviderDoc, RequestDoc } from '../types';
+import type { ProviderDoc, RequestDoc } from '../types';
+
+export type { RespondTxResult } from '../services/respond';
+export { executeRespondTx } from '../services/respond';
 
 const router = Router();
 
@@ -108,53 +112,6 @@ function respondHttpError(res: Response, code: string, err?: unknown): void {
   }
   console.error('respond transaction error:', err ?? code);
   res.status(500).json({ error: 'Błąd serwera' });
-}
-
-export type RespondTxResult =
-  | { status: 'ACCEPTED'; bookingId: string }
-  | { status: 'DECLINED'; bookingId: null }
-  | { errorCode: string };
-
-/** Transaction body for respond — exported for Phase 1 characterization tests; moves to services/ in Phase 3. */
-export async function executeRespondTx(
-  tx: FirebaseFirestore.Transaction,
-  requestRef: FirebaseFirestore.DocumentReference,
-  providerId: string,
-  action: 'accept' | 'decline',
-  requestId: string,
-): Promise<RespondTxResult> {
-  const snap = await tx.get(requestRef);
-  if (!snap.exists) throw new Error('NOT_FOUND');
-  const data = snap.data() as RequestDoc;
-  if (data.providerId !== providerId) throw new Error('FORBIDDEN');
-  if (data.status !== 'PENDING') throw new Error('NOT_PENDING');
-  if (data.expiresAt.toMillis() <= Date.now()) {
-    tx.update(requestRef, { status: 'TIMEOUT' });
-    return { errorCode: 'TIMEOUT' };
-  }
-
-  if (action === 'decline') {
-    tx.update(requestRef, { status: 'DECLINED' });
-    return { status: 'DECLINED', bookingId: null };
-  }
-
-  tx.update(requestRef, { status: 'ACCEPTED' });
-  const bookingRef = db().collection('bookings').doc();
-  const booking: BookingDoc = {
-    requestId,
-    providerId: data.providerId,
-    seekerId: data.seekerId,
-    categoryId: data.categoryId,
-    status: 'CONFIRMED',
-    createdAt: Timestamp.now(),
-    startTime: Timestamp.now(),
-  };
-  tx.set(bookingRef, booking);
-
-  const providerRef = db().collection('providers').doc(providerId);
-  tx.update(providerRef, { isOnline: false, updatedAt: Timestamp.now() });
-
-  return { status: 'ACCEPTED', bookingId: bookingRef.id };
 }
 
 router.post('/requests/:id/respond', requireAuth, async (req: AuthedRequest, res) => {

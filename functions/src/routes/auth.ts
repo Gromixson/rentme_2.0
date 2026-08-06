@@ -70,11 +70,17 @@ router.post('/register', async (req, res) => {
         REGISTER_TIMEOUT_MS,
       );
     } catch (inner) {
-      if (record?.uid) {
+      const uid = record?.uid;
+      if (uid) {
         await admin
           .auth()
-          .deleteUser(record.uid)
-          .catch(() => undefined);
+          .deleteUser(uid)
+          .catch((cleanupErr) => {
+            console.error('register rollback: deleteUser failed', {
+              uid,
+              cleanupErr,
+            });
+          });
       }
       throw inner;
     }

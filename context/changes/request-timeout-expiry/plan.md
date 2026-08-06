@@ -203,10 +203,10 @@ Manual scenariusz negatywny MVP.md §7 + aktualizacja roadmap.
 
 ## Progress
 
-| Phase                 | Status   | Commit        | Notes                                                                       |
-| --------------------- | -------- | ------------- | --------------------------------------------------------------------------- |
-| 0 — Unit tests (M3L2) | **done** | —             | `requests.test.ts` (9), Vitest harness, `isPendingPastExpiry` extract; R-04 |
-| 1 — Index + scheduler | done     | inline author | composite index + tx per doc in expireStalePendingRequests                  |
-| 2 — API consistency   | pending  | —             |                                                                             |
-| 3 — Seeker UX         | pending  | —             |                                                                             |
-| 4 — Verification      | pending  | —             |                                                                             |
+| Phase                 | Status   | Commit           | Notes                                                                       |
+| --------------------- | -------- | ---------------- | --------------------------------------------------------------------------- |
+| 0 — Unit tests (M3L2) | **done** | —                | `requests.test.ts` (9), Vitest harness, `isPendingPastExpiry` extract; R-04 |
+| 1 — Index + scheduler | done     | inline author    | composite index + tx per doc in expireStalePendingRequests                  |
+| 2 — API consistency   | **done** | audit 2026-07-25 | GET `/:id`, `/my`, provider pending — all use `resolveRequestStatus`        |
+| 3 — Seeker UX         | **done** | audit 2026-07-25 | timer + poll 3s + TIMEOUT toast already in waiting/my-requests              |
+| 4 — Verification      | pending  | —                | Manual §7 checklist in `verification.md` — needs dual Firebase accounts     |

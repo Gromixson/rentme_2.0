@@ -1,11 +1,29 @@
-﻿# Pending backlog â€” RentMe 2.0 + kurs 10xDevs
+﻿# Pending backlog — RentMe 2.0 + kurs 10xDevs
 
-> Ostatnia aktualizacja: 2026-07-12  
-> Cel: jedno miejsce na niedokoĹ„czone lekcje, slice'y i blokery â€” ĹĽeby Ĺ‚atwo wrĂłciÄ‡ bez szukania w historii czatu.
+> Ostatnia aktualizacja: 2026-07-26 (triage close-out: firestore-model + E2E smoke docs; CLI nadal **auth_expired**; brak git remote)  
+> Cel: jedno miejsce na niedokończone lekcje, slice'y i blokery — żeby łatwo wrócić bez szukania w historii czatu.
 
 ---
 
-## Blockers (wymagajÄ… dziaĹ‚ania uĹĽytkownika)
+## Checklist odblokowań użytkownika (kurs → Mission Log / odznaki)
+
+Bez tych kroków artefakty M1–M5 w repo nie przełożą się na pełne evidence odznak:
+
+| #   | Odblokowanie                            | Komenda / miejsce                                                                                                                                                                          | Status                                                                                                         |
+| --- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| 1   | **10x CLI auth + sync**                 | `npx @przeprogramowani/10x-cli@latest auth --email miroslaw.moskalik@gmail.com` → klik magic link **podczas gdy CLI polluje** → `npx @przeprogramowani/10x-cli@latest sync` (+ `get m0l0`) | ⏳ **blocked** — 2026-07-26 re-check: `auth --status` → `auth_expired` (oficjalny `get m0l0` nadal niemożliwy) |
+| 1b  | **mvp-check (10xBuilder)**              | Raport: [`../changes/mvp-check/report.md`](../changes/mvp-check/report.md); prompt (rekonstrukcja): [`.cursor/prompts/mvp-check.md`](../../.cursor/prompts/mvp-check.md)                   | ✅ **5/5** — CRUD Delete via `POST /requests/:id/cancel` → `CANCELLED`                                         |
+| 2   | **Git remote + `gh`**                   | Patrz sekcja poniżej — **wymaga URL od Ciebie**; agent nie wymyśla remote                                                                                                                  | ⏳                                                                                                             |
+| 3   | **E2E creds** (`rentme2-76ba8`)         | Dual auth → pełny suite; **bez creds:** smoke `e2e/seed.spec.ts` (R-08) — [`e2e/README.md`](../../e2e/README.md)                                                                           | ⏳ (smoke bez creds OK)                                                                                        |
+| 4   | **Architect §6**                        | Propozycja decyzji w [`architect-report.md`](../architect-report.md) §6 ✅ — użytkownik wkleja/submit przy odznace M4                                                                      | ✅ (await badge)                                                                                               |
+| 5   | **OPENROUTER_API_KEY** (opcjonalnie M5) | `agents/code-review/.env` → `npm run review:diff` / promptfoo                                                                                                                              | ⏳                                                                                                             |
+| 6   | **Deploy cancel na prod** (opcjonalnie) | Po commit soft-cancel: `npx firebase deploy --only hosting,functions --project rentme2-76ba8` — **pominięte** w triage (niecommitowane zmiany; nie wymuszamy deploy)                       | ⏳                                                                                                             |
+
+**Po odblokowaniu (kolejność agent/repo):** pełne E2E → `request-timeout-expiry` phase 4 (manual §7) → `provider-accept-booking` phase 3 (manual §7). Refactor-opportunities 1–4 ✅. M3L5 ✅. S-05/S-06 **code-complete** w repo (await manual).
+
+---
+
+## Blockers (wymagają działania użytkownika)
 
 ### Firebase â€” nowy projekt (migracja)
 
@@ -13,31 +31,43 @@
 - **Pozostało ręcznie:** lokalne **`environment.ts` / `environment.prod.ts`** z kluczami SDK z Console; konta **E2E** w tym projekcie (`e2e/.env.example`). Stary `rentme-b5e34` — archiwum / migracja danych opcjonalnie.
 - **Uwaga:** pierwsza baza Firestore była w **Datastore mode** — usunięta i utworzona ponownie jako **Native** (pusty projekt).
 
-### 10x CLI auth
+### 10x CLI auth + M0L0 / mvp-check
 
-- **Problem:** `npx @przeprogramowani/10x-cli auth` koĹ„czy siÄ™ `auth_timeout` â€” magic link na **miroslaw.moskalik@gmail.com** nie dotarĹ‚ (sprawdĹş spam / filtry).
-- **Skutek:** manifest utknÄ…Ĺ‚ na **`m1l4`** (`.cursor/.10x-cli-manifest.json`); brak lokalnych skilli **m2l3â€“m3l5** z paczki kursowej.
-- **Gdy link przyjdzie:**
-  1. `npx @przeprogramowani/10x-cli auth`
-  2. `npx @przeprogramowani/10x-cli sync` (lub `get <lessonId> --tool cursor` dla konkretnej lekcji)
-  3. Zweryfikuj manifest â†’ docelowo `m3l5` po ukoĹ„czeniu lekcji
-- **Uwaga:** override RentMe w `.cursor/rules/10x-course.mdc` (poza blokiem BEGIN/END) pozostaje â€” nie nadpisywaÄ‡ przy sync.
+- **Re-check (2026-07-26):** `auth --status` → **`auth_expired`**; `doctor` auth fail (`expires_at` 2026-05-20); `get m0l0` → **`auth_expired`** (oficjalna paczka M0L0 **nie** pobrana).
+- **Workaround:** prompt mvp-check zrekonstruowany z ogłoszenia → `.cursor/prompts/mvp-check.md`; raport → `context/changes/mvp-check/report.md` (**5/5** po soft-cancel Delete).
+- **Po udanym auth:** `sync` / `get m0l0` (nadpisze oficjalny prompt + `#skill-explainer`), potem ewentualnie odśwież raport jeśli kryteria w oficjalnym pliku różnią się od rekonstrukcji.
+- **Gdy cooldown/minie sesja:**
+  1. Terminal (otwarte): `npx @przeprogramowani/10x-cli@latest auth --email miroslaw.moskalik@gmail.com`
+  2. Klik magic link **podczas** polla CLI
+  3. `auth --status` → OK → `sync` + `get m0l0`
+- **Uwaga:** override RentMe w `.cursor/rules/10x-course.mdc` (poza BEGIN/END) — nie nadpisywać przy sync.
 
 ### Git remote + GitHub CLI
 
-- **Problem:** repo **bez `git remote`**; **`gh` nie zainstalowany** w PATH.
-- **Skutek:** nie da siÄ™ pushowaÄ‡ branchy z worktree M2L5 (`feature/request-timeout-expiry`, `feature/provider-accept-booking`) ani otwieraÄ‡ PR przez `gh pr create`.
-- **Gdy gotowe:**
-  1. UtwĂłrz repo na GitHubie i `git remote add origin <url>`
-  2. Zainstaluj [GitHub CLI](https://cli.github.com/) i `gh auth login`
-  3. Push branchy + PR wedĹ‚ug `context/changes/m2l5-parallel-note.md`
+- **Problem (2026-07-26):** `git remote -v` jest **puste** — agent **nie wymyśla** URL. Bez Twojego repo nie ma `push` / PR.
+- **`gh`:** zwykle brak w PATH — zainstaluj [GitHub CLI](https://cli.github.com/) jeśli chcesz `gh pr create`.
+- **Instrukcja (tylko Ty):**
+  1. Utwórz puste repo na GitHubie (np. `rentme_2.0`) — **nie** dodawaj README jeśli lokalnie już jest historia.
+  2. Skopiuj URL (`https://github.com/<you>/<repo>.git` lub SSH) i w katalogu repo:
+     ```powershell
+     git remote add origin <TWÓJ_URL>
+     git remote -v
+     git push -u origin master
+     ```
+  3. `gh auth login` (opcjonalnie) → push feature branches / PR wg `context/changes/m2l5-parallel-note.md`.
+- **Uwaga:** worktree branches `feature/request-timeout-expiry` / `feature/provider-accept-booking` są już zmergowane do `master` (baseline); remote potrzebny głównie pod cert / review / toolkit publish.
 
 ### Konta E2E (Playwright)
 
-- **Problem:** brak ustawionych zmiennych Ĺ›rodowiskowych dla auth setup.
-- **Wymagane:** `E2E_SEEKER_EMAIL` / `E2E_SEEKER_PASSWORD` oraz `E2E_PROVIDER_EMAIL` / `E2E_PROVIDER_PASSWORD` (dwa osobne konta Firebase Auth w **`rentme2-76ba8`**; provider z kategoriÄ… + stawkÄ… > 0).
-- **Skutek:** `role-guard.spec.ts` i `accept-booking.spec.ts` sÄ… **SKIP**; dziaĹ‚a tylko `seed.spec.ts` (goĹ›Ä‡).
-- **Instrukcja:** `e2e/README.md`
+- **Problem:** brak `e2e/.env` / zmiennych auth — agent **nie inventuje** sekretów.
+- **Smoke bez creds (zawsze):**
+  ```powershell
+  npm run e2e -- e2e/seed.spec.ts
+  # prod guest:
+  $env:BASE_URL="https://rentme2-76ba8.web.app"; npm run e2e -- e2e/seed.spec.ts
+  ```
+- **Pełny suite:** `E2E_SEEKER_EMAIL` / `E2E_SEEKER_PASSWORD` + `E2E_PROVIDER_*` (dwa konta w **`rentme2-76ba8`**; provider: kategoria + stawka > 0). Bez nich `role-guard` i `accept-booking` = **SKIP**.
+- **Instrukcja:** [`e2e/README.md`](../../e2e/README.md) + `e2e/.env.example`
 
 ---
 
@@ -158,33 +188,42 @@
   - `refactor-opportunities/plan.md` Phase 1 → done
 - **Moduł 5 Innovate path:** **KOMPLETNY** (L1 opportunity map · L2 code review · L3 CI review · L4 toolkit · L5 async delegation)
 
-### M3L5 â€” debugging lesson (swallowed errors)
+### M3L5 — debugging lesson (swallowed errors)
 
-- **Status:** **NIE rozpoczÄ™te**
-- **Zadanie kursowe:** audyt â€žpoĹ‚ykanychâ€ť bĹ‚Ä™dĂłw w backendzie â€” RentMe odpowiednik: `functions/src/` (routes, services, transakcje Firestore).
-- **Kontekst lekcji:** szukaj `catch` bez logowania / bez mapowania na `{ error: string }`; porĂłwnaj z konwencjÄ… w `AGENTS.md` i `provider-accept-booking` phase 1.
-- **Blokada:** skill m3l5 z paczki CLI â€” wymaga odblokowania **10x auth** (powyĹĽej).
+- **Status:** **✅ ukończone** (2026-07-25) — audyt bez paczki skill CLI
+- **Wykonane:** `context/changes/m3l5-swallowed-errors/verification.md`; fix logów w `middleware/auth.ts` + `routes/auth.ts` rollback; wpis w `lessons.md`
+- **Uwaga:** pełny sync skilli m3l5 z 10x-cli nadal zależy od auth użytkownika (checklist powyżej)
 
-### `provider-accept-booking` â€” Phase 3
+### `provider-accept-booking` — Phase 3
 
-- **Status:** Phase 1 (API errors) âś…, Phase 2 (provider UX â†’ `/bookings`) âś… â€” merge w `d117768`
-- **Phase 3 pending:** manualna checklista happy path **MVP Â§7** (kroki 3â€“5): accept â†’ jeden booking u obu stron; decline/timeout â†’ brak bookingu.
-- **Pliki:** `context/changes/provider-accept-booking/plan.md` Â§Phase 3; roadmap S-06 nadal `in-progress`.
+- **Status:** **code-complete** — Phase 1 (API errors) ✅, Phase 2 (UX → `/bookings`) ✅; Vitest respond ✅.
+- **Phase 3 pending (user only):** manual MVP §7 — `verification-phase-3.md`. Roadmap S-06 = `in-progress` (nie `done` bez checklist/E2E).
 
-### `request-timeout-expiry` â€” Phases 1â€“4
+### `request-timeout-expiry` — Phases 1–4
 
-| Phase    | Opis                                              | Stan                                                                |
-| -------- | ------------------------------------------------- | ------------------------------------------------------------------- |
-| 0        | Vitest unit (R-04), M3L2                          | âś… 9 testĂłw                                                       |
-| 1        | Index `status+expiresAt` + scheduler tx           | âś… kod w `firestore.indexes.json` + `requests.ts`; merge `a92e190` |
-| 1 deploy | Indeks wdroĹĽony                                  | âś… `context/deployment/deployment-result.md` (2026-07-12)          |
-| 2        | API read-path consistency                         | âŹł pending                                                         |
-| 3        | Seeker UX verification (timer/poll)               | âŹł pending                                                         |
-| 4        | Manual checklist MVP Â§7 negatywny + roadmap S-05 | âŹł pending                                                         |
+| Phase    | Opis                                             | Stan                                                               |
+| -------- | ------------------------------------------------ | ------------------------------------------------------------------ |
+| 0        | Vitest unit (R-04), M3L2                         | ✅ 9 testów                                                        |
+| 1        | Index `status+expiresAt` + scheduler tx          | ✅ kod w `firestore.indexes.json` + `requests.ts`; merge `a92e190` |
+| 1 deploy | Indeks wdrożony                                  | ✅ `context/deployment/deployment-result.md` (2026-07-12)          |
+| 2        | API read-path consistency                        | ✅ audit 2026-07-25 — `resolveRequestStatus` na GET paths          |
+| 3        | Seeker UX verification (timer/poll)              | ✅ audit 2026-07-25 — waiting + my-requests OK                     |
+| 4        | Manual checklist MVP §7 negatywny + roadmap S-05 | ⏳ user-only; S-05 = code-complete / `in-progress`                 |
+
+**firestore-model:** ✅ zaktualizowany do marketplace + `CANCELLED` (`.cursor/skills/rentme-firebase/references/firestore-model.md`) — stary model listings/owner usunięty.
+
+### `refactor-opportunities` — Phases 1–4
+
+| Phase | Opis                   | Stan                                  |
+| ----- | ---------------------- | ------------------------------------- |
+| 1     | Respond Vitest harness | ✅ (M5L5)                             |
+| 2     | Shared expiry guard    | ✅ 2026-07-25 — `isPendingPastExpiry` |
+| 3     | Strangler `respond.ts` | ✅ 2026-07-25                         |
+| 4     | Docs handoff           | ✅ verification.md + backlog          |
 
 ---
 
-## UkoĹ„czone (skrĂłt â€” ĹĽeby backlog byĹ‚ uĹĽyteczny)
+## Ukończone (skrót — żeby backlog był użyteczny)
 
 | Element                | DowĂłd / commit                                                                    |
 | ---------------------- | ---------------------------------------------------------------------------------- |
@@ -212,16 +251,15 @@
 
 ---
 
-## NastÄ™pne kroki po odblokowaniu (kolejnoĹ›Ä‡)
+## Następne kroki po odblokowaniu (kolejność)
 
-1. **10x auth + sync** â€” odblokuj m2l3â€“m3l5; zaktualizuj manifest poza `m1l4`.
-2. **E2E creds** â€” utwĂłrz konta Firebase, ustaw env, uruchom `npm run e2e` (peĹ‚ny suite).
-3. **DokoĹ„cz M3L4** â€” jeĹ›li coĹ› failuje z creds, popraw i uzupeĹ‚nij `e2e-critical-flows/verification.md`.
-4. **M3L5 swallowed-error audit** â€” przejrzyj `functions/src/`, napraw ciche `catch`, dopisz wpis do `lessons.md` jeĹ›li wzorzec siÄ™ powtarza.
-5. **Git remote + push** â€” opublikuj branchy feature; PR dla review.
-6. **P0 testy `provider-accept-booking`** â€” R-01/R-02 w `test-plan.md` (unit/harness respond accept/decline).
-7. **`request-timeout-expiry` phases 2â€“4** â€” API consistency, seeker UX, manual Â§7 negatywny.
-8. **`provider-accept-booking` phase 3** â€” manual MVP Â§7 happy path â†’ roadmap S-06 `done`.
+1. **10x auth + sync** — **nadal blocker** (2026-07-26: `auth_expired`). Po sukcesie: `sync` + `get m0l0` (nadpisz zrekonstruowany mvp-check).
+2. **Git remote** — Ty podajesz URL → `git remote add origin <url>` → push (agent nie inventuje remote).
+3. **E2E** — bez creds: smoke `seed.spec.ts`; z creds: pełny suite + uzupełnij `e2e-critical-flows/verification.md`.
+4. **`request-timeout-expiry` phase 4** — manual §7 negatywny → roadmap S-05 `done`.
+5. **`provider-accept-booking` phase 3** — manual MVP §7 → roadmap S-06 `done`.
+6. **Deploy soft-cancel** (opcjonalnie) — po commit: `firebase deploy --only hosting,functions --project rentme2-76ba8`.
+7. **OPENROUTER_API_KEY** — opcjonalnie pod live `review:diff` / promptfoo.
 
 ---
 

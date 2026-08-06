@@ -11,40 +11,33 @@ import { ToastService } from '../../../shared/services/toast.service';
   selector: 'app-request-form',
   imports: [ReactiveFormsModule, RouterLink, Card, Textarea, Button],
   template: `
-    <div class="page">
-      <a [routerLink]="['/seeker/category', categoryId]">← Wróć</a>
-      <p-card header="Wyślij prośbę">
+    <div class="page" style="--rm-page-max: 520px">
+      <a [routerLink]="['/seeker/category', categoryId]" class="back-link">← Wróć</a>
+      <div class="page-header">
+        <div>
+          <h1>Wyślij prośbę</h1>
+          <p class="page-lede">
+            Opisz, czego potrzebujesz — usługodawca odpowie w czasie oczekiwania.
+          </p>
+        </div>
+      </div>
+      <p-card>
         <form [formGroup]="form" (ngSubmit)="submit()">
-          <label>Twoja wiadomość (10–500 znaków)</label>
-          <textarea pTextarea formControlName="message" rows="5" class="w-full"></textarea>
+          <label for="req-message">Twoja wiadomość (10–500 znaków)</label>
+          <textarea
+            id="req-message"
+            pTextarea
+            formControlName="message"
+            rows="5"
+            class="w-full"
+          ></textarea>
           @if (form.controls.message.hasError('minlength')) {
             <small class="err">Minimum 10 znaków</small>
           }
-          <p-button type="submit" label="Wyślij" [loading]="busy()" class="mt-2" />
+          <p-button type="submit" label="Wyślij" [loading]="busy()" styleClass="w-full mt-2" />
         </form>
       </p-card>
     </div>
-  `,
-  styles: `
-    .page {
-      padding: 1rem;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-    .w-full {
-      width: 100%;
-    }
-    .mt-2 {
-      margin-top: 1rem;
-    }
-    .err {
-      color: #b91c1c;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
   `,
 })
 export class RequestFormComponent {

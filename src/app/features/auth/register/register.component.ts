@@ -3,50 +3,69 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
-import { Card } from 'primeng/card';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
-import { AuthService } from '../../../core/auth/auth.service';
 import { TimeoutError } from 'rxjs';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink, Card, InputText, Password, Button],
+  imports: [ReactiveFormsModule, RouterLink, InputText, Password, Button],
   template: `
-    <div class="auth-page">
-      <p-card header="Rejestracja">
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          <label>Imię / pseudonim</label>
-          <input pInputText formControlName="name" class="w-full" />
-          <label>Email</label>
-          <input pInputText formControlName="email" type="email" class="w-full" />
-          <label>Hasło (min. 6 znaków)</label>
-          <p-password formControlName="password" [feedback]="false" styleClass="w-full" inputStyleClass="w-full" />
-          <p-button type="submit" label="Utwórz konto" [loading]="busy()" class="mt-3" />
-        </form>
-        <p class="mt-3">
-          Masz konto? <a routerLink="/auth/login">Zaloguj się</a>
-        </p>
-      </p-card>
+    <div class="auth-shell">
+      <div class="auth-inner">
+        <a routerLink="/" class="auth-brand">RentMe</a>
+        <p class="auth-tagline">Jedno konto — tryb klienta i usługodawcy.</p>
+        <div class="auth-panel">
+          <h2>Dołącz do RentMe</h2>
+          <p class="auth-sub">Załóż konto i zacznij od roli klienta.</p>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <label for="reg-name">Imię / pseudonim</label>
+            <input
+              id="reg-name"
+              pInputText
+              formControlName="name"
+              class="w-full"
+              autocomplete="nickname"
+            />
+            <label for="reg-email">Email</label>
+            <input
+              id="reg-email"
+              pInputText
+              formControlName="email"
+              type="email"
+              class="w-full"
+              autocomplete="email"
+            />
+            <label for="reg-password">Hasło (min. 6 znaków)</label>
+            <p-password
+              inputId="reg-password"
+              formControlName="password"
+              [feedback]="false"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              autocomplete="new-password"
+            />
+            <p-button
+              type="submit"
+              label="Utwórz konto"
+              [loading]="busy()"
+              styleClass="w-full mt-3"
+            />
+          </form>
+          <p class="auth-footer">
+            Masz konto?
+            <a routerLink="/auth/login">Zaloguj się</a>
+          </p>
+        </div>
+      </div>
     </div>
   `,
   styles: `
-    .auth-page {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    label {
-      display: block;
-      margin: 0.75rem 0 0.25rem;
-      font-weight: 500;
-    }
-    .w-full {
+    :host ::ng-deep .p-password {
       width: 100%;
-    }
-    .mt-3 {
-      margin-top: 1rem;
+      display: block;
     }
   `,
 })
@@ -74,8 +93,7 @@ export class RegisterComponent {
     } catch (err: unknown) {
       let msg = 'Rejestracja nie powiodła się.';
       if (err instanceof TimeoutError) {
-        msg =
-          'API nie odpowiada (timeout). Sprawdź deploy Functions lub połączenie.';
+        msg = 'API nie odpowiada (timeout). Sprawdź deploy Functions lub połączenie.';
       } else if (err instanceof HttpErrorResponse) {
         if (err.status === 0) {
           msg = 'Brak połączenia z API (CORS lub Functions niedostępne).';

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { Timestamp, db, REQUEST_TIMEOUT_MS } from '../db';
 import type { RequestDoc } from '../types';
-import { executeRespondTx } from './providers';
+import { executeRespondTx } from '../services/respond';
 
 vi.mock('../db', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../db')>();

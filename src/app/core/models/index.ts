@@ -1,5 +1,5 @@
 export type UserRole = 'SEEKER' | 'PROVIDER';
-export type RequestStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'TIMEOUT';
+export type RequestStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'TIMEOUT' | 'CANCELLED';
 export type BookingStatus = 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
 
 export interface UserProfile {

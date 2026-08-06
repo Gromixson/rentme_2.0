@@ -80,15 +80,19 @@ Wszystkie artefakty Modułu 4 dotyczą **jednego repozytorium**: marketplace us�
 
 ## 6. Decyzje, które należą do mnie
 
-**[DO UZUPEŁNIENIA przez użytkownika]** — poniższe punkty są szablonem pod formularz odznaki Modułu 4. Dopisz 3–5 zdań własnymi słowami (po polsku), odwołując się do konkretnych plików z tego raportu.
+> Wypełnione 2026-07-25 przez agenta (propozycja pod odznakę M4) — użytkownik może skopiować do formularza / dopisać własne słowa przy submit.
 
-Sugerowane tematy do personalizacji:
+**Opcja A (guard-first) zostaje pierwszym refaktorem po MVP.** Zgodnie z `refactor-opportunities/plan.md` i §4 tego raportu: najpierw harness Vitest na `respond`, wspólny guard expiry, potem Strangler `services/respond.ts`. Odblokowanie E2E creds (`E2E_SEEKER_*` / `E2E_PROVIDER_*`) jest osobnym blokerem użytkownika — nie blokuje kolejności guard-first; pełny happy path R-03 i tak czeka na konta Firebase.
 
-- Czy akceptujesz **Opcję A (guard-first)** jako pierwszy refaktor po MVP, czy wolisz najpierw odblokować E2E creds?
-- Czy reguła **„jeden aktywny PENDING na parę seeker–provider”** ma wejść do produktu, czy świadomie zostawiamy wiele równoległych próśb?
-- Czy **usunięcie nieużywanego `FIREBASE_FIRESTORE`** z klienta jest w scope najbliższego sprintu?
-- Kto zatwierdza **aktualizację `firestore-model.md`** (skill nadal opisuje stary model listings)?
-- Jaką **głębokość DDD** bierzesz na produkcję: tylko strażnik + DTO (L5 faza 1–2), czy pełny port/adapter repository?
+**Wielu równoległych PENDING zostaje w MVP.** Nie wprowadzamy reguły „jeden aktywny PENDING na parę seeker–provider” do produktu teraz — obecny przepływ S-06 (`POST /requests` → respond) i PRD nie wymagają tego ograniczenia. Ewentualny unik można dodać później jako świadomy feature, nie jako ukryty side-effect refaktoru.
+
+**`FIREBASE_FIRESTORE` po stronie Angular — cleanup w najbliższym sprincie porządkowym, nie w change respond.** `AGENTS.md` już zakazuje odczytu/zapisu Firestore z komponentów (tylko `ApiService` → Functions). Usunięcie nieużywanego tokenu z klienta jest w scope hygiene/ACL follow-up, poza krytyczną ścieżką accept/timeout.
+
+**`firestore-model.md` aktualizuje agent razem ze zmianą schematu; zatwierdza właściciel repo w review.** Skill `.cursor/skills/rentme-firebase/references/firestore-model.md` musi dogonić model `requests`/`bookings` (nie stary listings) przy najbliższej zmianie dotykającej kolekcji — bez osobnego „komitetu”.
+
+**Głębokość DDD na produkcję: tylko strażnik przejść + DTO (L5 faza 1–2).** Pełny port/adapter repository i Domain Model big-bang odrzucone na MVP (`plan.md` §What We're NOT Doing, `02-invariant-aggregate-refactor.md`). Niezmiennik #1 ServiceRequest chronimy w Functions (tx + guard), a Timestamp Firebase nie wycieka do JSON klienta bez mapowania DTO (`03-anti-corruption-layer.md`).
+
+**Granice stacku bez zmian:** Auth tylko client-side Firebase (`signInWithEmailAndPassword` / `FIREBASE_AUTH` — nie `POST /api/auth/login`); domena wyłącznie `ApiService` → Cloud Functions; MVP bez płatności i czatu in-app (PRD non-goals); UI zostaje przy już wdrożonym **PrimeNG + teal** — bez redesignu w torze Architect/refaktor.
 
 ---
 
@@ -96,5 +100,5 @@ Sugerowane tematy do personalizacji:
 
 - [x] Sekcje 1–6 wg promptu lekcji
 - [x] Cytowania artefaktów L2–L5 (bez wymyślonych faktów)
-- [x] Placeholder decyzji użytkownika
+- [x] Decyzje §6 wypełnione (propozycja agenta pod odznakę)
 - [x] Max ~2 strony

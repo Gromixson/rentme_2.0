@@ -13,65 +13,83 @@ import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-bookings-list',
-  imports: [
-    ReactiveFormsModule,
-    Card,
-    Tag,
-    Button,
-    Dialog,
-    InputNumber,
-    Textarea,
-  ],
+  imports: [ReactiveFormsModule, Card, Tag, Button, Dialog, InputNumber, Textarea],
   template: `
-    <div class="page">
-      <h1>Moje rezerwacje</h1>
-      @for (b of bookings(); track b.id) {
-        <p-card class="item">
-          <p-tag [value]="b.status" />
-          <p>ID: {{ b.id.slice(0, 8) }}…</p>
-          @if (b.status === 'CONFIRMED') {
-            <p-button label="Zakończ usługę" (onClick)="complete(b.id)" class="mr-1" />
-          }
-          @if (b.status === 'COMPLETED' && isSeeker() && b.seekerId === myUid()) {
-            <p-button label="Oceń" (onClick)="openRate(b.id)" />
-          }
-        </p-card>
-      } @empty {
-        <p>Brak rezerwacji.</p>
-      }
+    <div class="page" style="--rm-page-max: 640px">
+      <div class="page-header">
+        <div>
+          <h1>Moje rezerwacje</h1>
+          <p class="page-lede">Potwierdzone i zakończone usługi.</p>
+        </div>
+      </div>
+      <div class="page-stack">
+        @for (b of bookings(); track b.id) {
+          <p-card>
+            <div class="item-row">
+              <div>
+                <p-tag [value]="statusLabel(b.status)" [severity]="statusSeverity(b.status)" />
+                <p class="id">ID: {{ b.id.slice(0, 8) }}…</p>
+              </div>
+              <div class="actions">
+                @if (b.status === 'CONFIRMED') {
+                  <p-button label="Zakończ usługę" (onClick)="complete(b.id)" />
+                }
+                @if (b.status === 'COMPLETED' && isSeeker() && b.seekerId === myUid()) {
+                  <p-button
+                    label="Oceń"
+                    severity="secondary"
+                    [outlined]="true"
+                    (onClick)="openRate(b.id)"
+                  />
+                }
+              </div>
+            </div>
+          </p-card>
+        } @empty {
+          <p class="empty-state">Brak rezerwacji.</p>
+        }
+      </div>
     </div>
 
-    <p-dialog header="Oceń usługę" [(visible)]="rateVisible" [modal]="true" styleClass="rate-dialog">
+    <p-dialog
+      header="Oceń usługę"
+      [(visible)]="rateVisible"
+      [modal]="true"
+      styleClass="rate-dialog"
+    >
       <form [formGroup]="rateForm" (ngSubmit)="submitRate()">
-        <label>Ocena 1–5</label>
-        <p-inputNumber formControlName="rating" [min]="1" [max]="5" />
-        <label>Komentarz (opcjonalnie)</label>
-        <textarea pTextarea formControlName="comment" rows="3" class="w-full"></textarea>
-        <p-button type="submit" label="Wyślij ocenę" class="mt-2" />
+        <label for="rating">Ocena 1–5</label>
+        <p-inputNumber inputId="rating" formControlName="rating" [min]="1" [max]="5" />
+        <label for="comment">Komentarz (opcjonalnie)</label>
+        <textarea
+          id="comment"
+          pTextarea
+          formControlName="comment"
+          rows="3"
+          class="w-full"
+        ></textarea>
+        <p-button type="submit" label="Wyślij ocenę" styleClass="w-full mt-2" />
       </form>
     </p-dialog>
   `,
   styles: `
-    .page {
-      padding: 1rem;
-      max-width: 640px;
-      margin: 0 auto;
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
     }
-    .item {
-      margin-bottom: 0.75rem;
+    .id {
+      margin: 0.5rem 0 0;
+      font-size: 0.85rem;
+      color: var(--rm-ink-muted);
+      font-family: ui-monospace, monospace;
     }
-    .mr-1 {
-      margin-right: 0.5rem;
-    }
-    .w-full {
-      width: 100%;
-    }
-    .mt-2 {
-      margin-top: 1rem;
-    }
-    label {
-      display: block;
-      margin: 0.5rem 0 0.25rem;
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
   `,
 })
@@ -134,5 +152,20 @@ export class BookingsListComponent implements OnInit {
       },
       error: (err) => this.toast.error(err?.error?.error ?? 'Błąd oceny'),
     });
+  }
+
+  statusLabel(status: string): string {
+    const map: Record<string, string> = {
+      CONFIRMED: 'Potwierdzona',
+      COMPLETED: 'Zakończona',
+      CANCELLED: 'Anulowana',
+    };
+    return map[status] ?? status;
+  }
+
+  statusSeverity(status: string): 'success' | 'danger' | 'warn' | 'info' {
+    if (status === 'COMPLETED') return 'success';
+    if (status === 'CANCELLED') return 'danger';
+    return 'info';
   }
 }

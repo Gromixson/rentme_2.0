@@ -195,12 +195,12 @@ Zaktualizować dokumentację postępu; **nie** implementować E2E creds w tym ch
 
 ## Progress (format `/10x-implement`)
 
-| Phase | Opis                           | Status  | Commit | Notes                                              |
-| ----- | ------------------------------ | ------- | ------ | -------------------------------------------------- |
-| 1     | Respond characterization tests | done    | M5L5   | Headless lokalnie (async dry-run); 6 testów Vitest |
-| 2     | Shared expiry guard            | pending | —      | Wymaga phase 1 green                               |
-| 3     | Extract respond service        | pending | —      | Strangler                                          |
-| 4     | Docs handoff                   | pending | —      | Backlog + opcjonalnie verification.md              |
+| Phase | Opis                           | Status   | Commit     | Notes                                              |
+| ----- | ------------------------------ | -------- | ---------- | -------------------------------------------------- |
+| 1     | Respond characterization tests | done     | M5L5       | Headless lokalnie (async dry-run); 6 testów Vitest |
+| 2     | Shared expiry guard            | **done** | 2026-07-25 | `isPendingPastExpiry` in `services/respond.ts`     |
+| 3     | Extract respond service        | **done** | 2026-07-25 | Strangler → `functions/src/services/respond.ts`    |
+| 4     | Docs handoff                   | **done** | 2026-07-25 | verification.md + backlog update                   |
 
 ---
 

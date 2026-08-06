@@ -20,3 +20,10 @@
 - **Problem**: Throwing inside a transaction callback after `tx.update` rolls back the write; client gets the correct HTTP status but DB state stays stale (e.g. expired request remains `PENDING` until a separate read path expires it).
 - **Rule**: If the transaction must persist a state change and still signal a business error to the caller, return a discriminated result (e.g. `{ errorCode }`) from the callback instead of throwing. Reserve `throw` for cases where no write should commit.
 - **Applies to**: implement, impl-review
+
+## Cleanup in catch must still log
+
+- **Context**: Cloud Functions register / auth rollback (`deleteUser` after failed Firestore write) and `requireAuth` token verification (M3L5 audit).
+- **Problem**: Empty `.catch(() => undefined)` or bare `catch { res.status(401) }` hides operational failures (orphan Auth users, token storm) while HTTP mapping looks fine.
+- **Rule**: Map errors to `{ error: string }` for the client, but always `console.error` / `console.warn` in cleanup and auth failure paths. Soft-fail after a committed write (e.g. recalc counts) may continue — still log.
+- **Applies to**: implement, impl-review, debug

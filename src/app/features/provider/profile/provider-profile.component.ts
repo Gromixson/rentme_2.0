@@ -12,24 +12,27 @@ import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-provider-profile',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    Card,
-    InputNumber,
-    Textarea,
-    MultiSelect,
-    Button,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, Card, InputNumber, Textarea, MultiSelect, Button],
   template: `
-    <div class="page">
-      <a routerLink="/provider">← Panel</a>
-      <p-card header="Profil usługodawcy">
+    <div class="page" style="--rm-page-max: 480px">
+      <a routerLink="/provider" class="back-link">← Panel</a>
+      <div class="page-header">
+        <div>
+          <h1>Profil usługodawcy</h1>
+          <p class="page-lede">Stawka, bio i kategorie — wymagane przed przejściem online.</p>
+        </div>
+      </div>
+      <p-card>
         <form [formGroup]="form" (ngSubmit)="save()">
-          <label>Stawka za godzinę (zł)</label>
-          <p-inputNumber formControlName="hourlyRate" [min]="1" class="w-full" />
-          <label>Bio</label>
-          <textarea pTextarea formControlName="bio" rows="3" class="w-full"></textarea>
+          <label for="hourly">Stawka za godzinę (zł)</label>
+          <p-inputNumber
+            inputId="hourly"
+            formControlName="hourlyRate"
+            [min]="1"
+            styleClass="w-full"
+          />
+          <label for="bio">Bio</label>
+          <textarea id="bio" pTextarea formControlName="bio" rows="3" class="w-full"></textarea>
           <label>Kategorie</label>
           <p-multiSelect
             formControlName="categories"
@@ -37,29 +40,17 @@ import { ToastService } from '../../../shared/services/toast.service';
             optionLabel="name"
             optionValue="id"
             placeholder="Wybierz kategorie"
-            class="w-full"
+            styleClass="w-full"
           />
-          <p-button type="submit" label="Zapisz" [loading]="busy()" class="mt-2" />
+          <p-button type="submit" label="Zapisz" [loading]="busy()" styleClass="w-full mt-2" />
         </form>
       </p-card>
     </div>
   `,
   styles: `
-    .page {
-      padding: 1rem;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-    label {
-      display: block;
-      margin: 0.75rem 0 0.25rem;
-      font-weight: 500;
-    }
-    .w-full {
+    :host ::ng-deep .p-inputnumber,
+    :host ::ng-deep .p-multiselect {
       width: 100%;
-    }
-    .mt-2 {
-      margin-top: 1rem;
     }
   `,
 })

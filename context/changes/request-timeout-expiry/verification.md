@@ -38,9 +38,40 @@ npm run functions:build
 
 Alternatywnie: w teście `requestExpiresAt` tymczasowo oczekuj `REQUEST_TIMEOUT_MS + 1` — fail potwierdza, że test nie jest tautologią.
 
-## Sign-off
+## Sign-off (M3L2)
 
 - [x] Vitest harness w `functions/`
 - [x] Oracle z PRD/MVP, nie z mirrorowania implementacji
 - [x] ≥1 edge case (terminal status, future PENDING)
-- [ ] Phase 1–4 implementacji S-05 (indeks, scheduler) — poza zakresem M3L2
+
+---
+
+## Phases 2–4 — API / UX / manual (2026-07-25)
+
+### Phase 2 — API read-path consistency (code audit)
+
+| Endpoint                  | Lazy expiry via `resolveRequestStatus` | Notes                              |
+| ------------------------- | -------------------------------------- | ---------------------------------- |
+| `GET /requests/:id`       | ✅                                     | returns TIMEOUT when overdue       |
+| `GET /requests/my`        | ✅                                     | list items get resolved status     |
+| `GET /providers/requests` | ✅                                     | filters to `PENDING` after resolve |
+
+### Phase 3 — Seeker UX (code audit)
+
+| UI                | Contract                                                                       | Stan |
+| ----------------- | ------------------------------------------------------------------------------ | ---- |
+| `request-waiting` | timer `max(0, expiresAt−now)`, poll 3s, toast „Czas minął”, link „Moje prośby” | ✅   |
+| `my-requests`     | labels TIMEOUT / API refresh                                                   | ✅   |
+
+### Phase 4 — Manual checklist MVP.md §7 (negatywny)
+
+Wymaga dwóch kont Firebase w `rentme2-76ba8` (seeker + provider online). Agent nie może tego domknąć bez E2E/manual creds.
+
+1. [ ] Provider online, seeker wysyła request
+2. [ ] Provider **nie** odpowiada ≥2 min
+3. [ ] Seeker widzi TIMEOUT na waiting screen
+4. [ ] „Moje prośby” → TIMEOUT
+5. [ ] Provider lista pending pusta (po lazy/scheduler)
+6. [ ] Brak dokumentu w `bookings`
+
+**Roadmap:** S-05 → `in-progress` (**code-complete** 2026-07-26); `done` dopiero po checklist powyżej.

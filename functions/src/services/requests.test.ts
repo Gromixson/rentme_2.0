@@ -63,7 +63,7 @@ describe('request timeout (R-04 / FR-011)', () => {
 
     it('returns false for terminal statuses even if expiresAt is past (edge: no re-expiry)', () => {
       const base = pendingDoc(now - 1);
-      for (const status of ['ACCEPTED', 'DECLINED', 'TIMEOUT'] as const) {
+      for (const status of ['ACCEPTED', 'DECLINED', 'TIMEOUT', 'CANCELLED'] as const) {
         expect(isPendingPastExpiry({ ...base, status }, now)).toBe(false);
       }
     });
