@@ -9,8 +9,8 @@ test.describe('R-08 auth guard — guest redirect', () => {
     await page.goto('/seeker');
 
     await expect(page).toHaveURL(/\/auth\/login/);
-    await expect(page.getByText('Logowanie')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Zaloguj' })).toBeEnabled();
+    await expect(page.getByRole('heading', { name: 'Zaloguj się' })).toBeVisible();
+    await expect(page.locator('form').getByRole('button', { name: 'Zaloguj' })).toBeEnabled();
     await expect(page.getByRole('link', { name: 'Zarejestruj się' })).toBeVisible();
   });
 
@@ -22,7 +22,7 @@ test.describe('R-08 auth guard — guest redirect', () => {
 
     await expect(page).toHaveURL(/\/auth\/login/);
     await expect(page.locator('input[type="email"]')).toHaveValue('');
-    await expect(page.getByText('Logowanie')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Zaloguj się' })).toBeVisible();
 
     // Unique run id — dokumentacja wzorca identyfikatorów (brak mutacji danych = brak cleanup)
     expect(runId).toBeGreaterThan(0);
