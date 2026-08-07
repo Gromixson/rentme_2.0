@@ -6,6 +6,7 @@ import { roleGuard } from './core/auth/role.guard';
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
     loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
     canActivate: [authGuard],
   },
