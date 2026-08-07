@@ -1,8 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test';
-import path from 'node:path';
-import { hasDualAccountCreds } from './helpers/env';
-
-const providerAuth = path.join(__dirname, '..', 'playwright', '.auth', 'provider.json');
+import { hasDualAccountCreds, providerCreds, seekerCreds } from './helpers/env';
+import { loginViaUi } from './helpers/login';
 
 /**
  * R-01 + R-03 — north star S-06: request → accept → booking widoczny u obu stron.
@@ -23,10 +21,10 @@ test.describe('R-01/R-03 accept booking flow', () => {
   }) => {
     const uniqueMessage = `E2E request ${Date.now()} — proszę o krótką usługę testową.`;
 
-    providerContext = await browser.newContext({ storageState: providerAuth });
+    providerContext = await browser.newContext();
     const providerPage = await providerContext.newPage();
 
-    await providerPage.goto('/provider');
+    await loginViaUi(providerPage, providerCreds().email, providerCreds().password);
     await expect(providerPage.getByRole('heading', { name: 'Panel usługodawcy' })).toBeVisible();
 
     const onlineSwitch = providerPage.getByRole('switch');
@@ -35,6 +33,7 @@ test.describe('R-01/R-03 accept booking flow', () => {
       await expect(onlineSwitch).toBeChecked({ timeout: 10_000 });
     }
 
+    await loginViaUi(page, seekerCreds().email, seekerCreds().password);
     await page.goto('/seeker');
     await expect(page.getByRole('heading', { name: 'Kategorie usług' })).toBeVisible();
 
@@ -57,21 +56,25 @@ test.describe('R-01/R-03 accept booking flow', () => {
     await page.getByRole('button', { name: 'Wyślij' }).click();
 
     await expect(page).toHaveURL(/\/seeker\/waiting\//);
-    await expect(page.getByRole('heading', { name: 'Oczekiwanie na odpowiedź' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Oczekiwanie' })).toBeVisible();
     await expect(page.getByText('Oczekuje')).toBeVisible();
 
     await providerPage.goto('/provider/requests');
     await expect(providerPage.getByText(uniqueMessage)).toBeVisible({ timeout: 20_000 });
-    await providerPage.getByRole('button', { name: 'Akceptuj' }).click();
+    await providerPage
+      .locator('p-card')
+      .filter({ hasText: uniqueMessage })
+      .getByRole('button', { name: 'Akceptuj' })
+      .click();
 
     await expect(providerPage).toHaveURL(/\/bookings/);
-    await expect(providerPage.getByText('CONFIRMED')).toBeVisible({ timeout: 15_000 });
+    await expect(providerPage.getByText('Potwierdzona').first()).toBeVisible({ timeout: 15_000 });
 
     await page.goto('/bookings');
-    await expect(page.getByText('CONFIRMED')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText('Potwierdzona').first()).toBeVisible({ timeout: 15_000 });
 
     // Cleanup: provider kończy usługę (status COMPLETED — brak wiszącego CONFIRMED)
-    await providerPage.getByRole('button', { name: 'Zakończ usługę' }).click();
-    await expect(providerPage.getByText('COMPLETED')).toBeVisible({ timeout: 15_000 });
+    await providerPage.getByRole('button', { name: 'Zakończ usługę' }).first().click();
+    await expect(providerPage.getByText('Zakończona').first()).toBeVisible({ timeout: 15_000 });
   });
 });

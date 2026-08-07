@@ -32,7 +32,10 @@ export function waitForAuthReady(
         return;
       }
       if (Date.now() >= deadline) {
-        promiseResolve(requireLoggedIn ? loginTree : homeTree);
+        // Keep public auth screens reachable when Firebase Auth initialization hangs
+        // (for example, a blocked persistence request in a browser). Protected
+        // routes still fail closed by redirecting to login.
+        promiseResolve(requireLoggedIn ? loginTree : true);
         return;
       }
       setTimeout(check, 50);

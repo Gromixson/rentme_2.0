@@ -1,10 +1,17 @@
 import { expect, test } from '@playwright/test';
+import { seekerCreds } from './helpers/env';
+import { loginViaUi } from './helpers/login';
 
 /**
  * R-07 — SEEKER z activeRole nie może wejść na trasy /provider/* (roleGuard).
  * Multi-boundary: routing + auth state + UI (nagłówek roli).
  */
 test.describe('R-07 role guard', () => {
+  test.beforeEach(async ({ page }) => {
+    const { email, password } = seekerCreds();
+    await loginViaUi(page, email, password);
+  });
+
   test('seeker na /provider/requests zostaje przekierowany do strefy klienta', async ({ page }) => {
     await page.goto('/provider/requests');
 
@@ -19,6 +26,6 @@ test.describe('R-07 role guard', () => {
 
     await expect(page.getByRole('link', { name: 'Kategorie' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Moje prośby' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Prośby' })).not.toBeVisible();
+    await expect(page.getByRole('link', { name: 'Prośby', exact: true })).not.toBeVisible();
   });
 });

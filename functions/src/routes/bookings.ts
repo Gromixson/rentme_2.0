@@ -8,12 +8,8 @@ const router = Router();
 
 router.get('/my', requireAuth, async (req: AuthedRequest, res) => {
   const [asSeeker, asProvider] = await Promise.all([
-    db().collection('bookings').where('seekerId', '==', req.uid).orderBy('createdAt', 'desc').get(),
-    db()
-      .collection('bookings')
-      .where('providerId', '==', req.uid)
-      .orderBy('createdAt', 'desc')
-      .get(),
+    db().collection('bookings').where('seekerId', '==', req.uid).get(),
+    db().collection('bookings').where('providerId', '==', req.uid).get(),
   ]);
 
   const map = new Map<string, BookingDoc & { id: string }>();
